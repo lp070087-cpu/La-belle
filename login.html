@@ -54,8 +54,7 @@
 
           <div class="cx-aviso">
             <span data-ico="info" aria-hidden="true"></span>
-            <p><b>Demonstração visual.</b> Esta é a tela de acesso da cliente. O projeto ainda não tem
-            servidor de login, então nenhuma senha é enviada, guardada ou conferida aqui.</p>
+            <p>Entre com o e-mail e a senha da sua conta para ver os seus pedidos e os seus dados.</p>
           </div>
 
           <form id="formLogin" novalidate>
@@ -77,9 +76,9 @@
             </div>
 
             <div class="cx-recuperar oculto" id="recuperar">
-              <p>A redefinição de senha por e-mail chega junto com a área do cliente.
-              Por enquanto, fale com a loja pelo WhatsApp informando o e-mail da sua conta
-              e a La Belle libera um novo acesso para você.</p>
+              <p>A redefinição de senha por e-mail ainda não está ligada — <b>pendente de
+              integração de e-mail</b>. Por enquanto, fale com a loja pelo WhatsApp informando
+              o e-mail da sua conta e a La Belle libera um novo acesso para você.</p>
             </div>
 
             <button class="bt bt--rosa bt--largo" type="submit">Entrar</button>
@@ -108,6 +107,7 @@
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/conta-ui.js"></script>
 <script src="assets/js/conta-mock.js"></script>
+<script src="assets/js/conta-api.js"></script>
 <script>
 (function () {
   "use strict";
@@ -120,6 +120,7 @@
   var botao = form.querySelector('button[type="submit"]');
   var email = form.querySelector("[name=email]");
   var senha = form.querySelector("[name=senha]");
+  var manter = form.querySelector("[name=manter]");
   var sistema = document.querySelector("#sistema");
   var recuperar = document.querySelector("#recuperar");
 
@@ -127,6 +128,12 @@
   [email, senha].forEach(function (c) {
     c.addEventListener("input", function () { CONTA_UI.limparErro(c); });
   });
+
+  function avisar(html) {
+    sistema.innerHTML = html;
+    sistema.classList.remove("oculto");
+    sistema.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 
   document.querySelector("#btEsqueci").addEventListener("click", function () {
     var aberto = !recuperar.classList.contains("oculto");
@@ -150,19 +157,25 @@
 
     if (CONTA_UI.focarPrimeiroErro(form)) return;
 
-    /* Nao existe autenticacao real nesta fase. Em vez de fingir um login,
-       a tela diz a verdade e oferece o caminho que a loja ja usa hoje. */
+    /* Autenticacao REAL: a senha vai por HTTPS no corpo do POST e nao fica
+       guardada em lugar nenhum no navegador. Quem guarda a sessao e o
+       servidor, num cookie HttpOnly que este codigo nem consegue ler. */
     botao.disabled = true;
-    CONTA_MOCK.API.entrar(vEmail, vSenha)["catch"](function () {
-      sistema.innerHTML =
-        '<p><b>Ainda não foi possível entrar.</b> Este projeto está na fase de apresentação e ' +
-        'não tem servidor de login. A sua senha não foi enviada nem guardada em nenhum lugar.</p>' +
-        '<a class="bt bt--rosa bt--pequeno" href="' + LB.LOJA.whatsapp + '" target="_blank" rel="noopener">' +
-        'Falar com a loja no WhatsApp</a>';
-      sistema.classList.remove("oculto");
-      botao.disabled = false;
-      sistema.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
+    CONTA_API.AUTH.entrar(vEmail, vSenha, manter && manter.checked)
+      .then(function () {
+        /* Sessao criada. Vai para a area da cliente. */
+        location.href = "conta.html";
+      })
+      .catch(function (falha) {
+        botao.disabled = false;
+        if (falha && falha.campo) {
+          CONTA_UI.marcarErro(form.querySelector("[name=" + falha.campo + "]") || email, falha.mensagem || falha.message);
+          CONTA_UI.focarPrimeiroErro(form);
+          return;
+        }
+        /* Mensagem generica no login: nunca dizemos se o e-mail existe. */
+        avisar("<p>" + (falha && falha.message ? falha.message : "Não foi possível entrar agora.") + "</p>");
+      });
   });
 })();
 </script>

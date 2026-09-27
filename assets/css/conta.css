@@ -120,33 +120,32 @@
 .escolha.cx-erro-aceite input { border-color: #d8412f; background: #fdf2f0; }
 .escolha.cx-erro-aceite span { color: #c0301f; }
 
-/* ============================== 11. FAIXA DO MODO DEMONSTRACAO
+/* ======================= 11. FAIXA DE AVISO DA AREA DA CLIENTE
    Fica no fim do arquivo de proposito: e a ultima folha carregada, entao
    estas regras vencem o .oculto do base.css sem precisar de !important.
-   Fora do modo demo a faixa simplesmente nao existe na tela.              */
-.cx-faixa-demo { display: none; }
-body.em-demo .cx-faixa-demo {
+   Ela aparece sempre que a area da cliente esta aberta (body.tem-conta),
+   porque os PEDIDOS e os ENDERECOS ainda sao de exemplo. Enquanto isso for
+   verdade, a faixa fica: o dado de demonstracao nao pode se passar por
+   pedido real desta cliente. Quando o backend de pedidos existir, a faixa
+   e o corpo de dados mock saem juntos.                                    */
+.cx-faixa-aviso { display: none; }
+body.tem-conta .cx-faixa-aviso {
   display: block;
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
   background: var(--tinta); color: #fff;
   border-top: 1px solid rgba(255, 255, 255, .12);
 }
-.cx-faixa-demo__dentro {
+.cx-faixa-aviso__dentro {
   display: flex; align-items: center; gap: .9rem;
   padding-block: .7rem; flex-wrap: wrap;
 }
-.cx-faixa-demo__dentro > span { color: var(--rosa); flex: 0 0 auto; display: inline-flex; }
-.cx-faixa-demo__dentro > span svg { width: 16px; height: 16px; }
-.cx-faixa-demo p { flex: 1 1 16rem; font-size: .78rem; line-height: 1.6; color: rgba(255, 255, 255, .8); }
-.cx-faixa-demo b { color: #fff; font-weight: 500; }
-.cx-faixa-demo .cx-bt-mini {
-  background: transparent; border-color: rgba(255, 255, 255, .4); color: #fff;
-  white-space: nowrap;
-}
-.cx-faixa-demo .cx-bt-mini:hover { border-color: var(--rosa); color: var(--rosa); }
+.cx-faixa-aviso__dentro > span { color: var(--rosa); flex: 0 0 auto; display: inline-flex; }
+.cx-faixa-aviso__dentro > span svg { width: 16px; height: 16px; }
+.cx-faixa-aviso p { flex: 1 1 16rem; font-size: .78rem; line-height: 1.6; color: rgba(255, 255, 255, .8); }
+.cx-faixa-aviso b { color: #fff; font-weight: 500; }
 
 /* a faixa nao pode cobrir o fim do conteudo */
-body.em-demo main { padding-bottom: 5.5rem; }
+body.tem-conta main { padding-bottom: 5.5rem; }
 
 
 /* ================================================ 4. CABECA DO PAINEL */

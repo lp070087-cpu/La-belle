@@ -16,11 +16,21 @@
 <link rel="stylesheet" href="assets/css/paginas.css">
 <link rel="stylesheet" href="assets/css/conta.css">
 
-<!-- Evita o piscar da tela de acesso antes do JS pintar a casca. -->
+<!-- A area da cliente fica escondida ate o SERVIDOR confirmar a sessao.
+     Isto NAO e a protecao: e so para nao piscar um conteudo vazio. Quem
+     decide de verdade e /api/auth/me (cookie HttpOnly), e o dado privado
+     so chega pela API. Esconder elemento nenhum protege nada.
+
+     O id e #areaConta, e NAO #painel, de proposito: a casca do site que o
+     ui.js injeta em [data-shell-topo] (logo ali em cima) ja cria um
+     <div class="painel" id="painel"> — o mega-menu. Com dois "painel" na
+     mesma pagina, `document.querySelector("#painel")` devolve o PRIMEIRO,
+     que e o mega-menu, e a area da cliente nunca aparecia. Dois elementos
+     com o mesmo id e HTML invalido, mas o navegador nao avisa: ele so
+     escolhe um. Por isso o id daqui e outro. Ver prova I da bancada. -->
 <style id="estado-inicial">
-  .js-ligado #portao { display: none !important; }
+  body:not(.tem-conta) #areaConta { display: none; }
 </style>
-<script>document.documentElement.className += " js-ligado";</script>
 </head>
 <body>
 
@@ -33,62 +43,63 @@
       <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Minha conta</span>
     </nav>
 
-    <!-- ===================== PORTÃO: ENTRAR / CRIAR CONTA =====================
-         Mesma estrutura .entrar--pagina que o site já usa. As abas aqui são
-         links para login.html e cadastro.html, que são as páginas de acesso. -->
-    <section id="portao">
-      <div class="entrar entrar--pagina pagina-acesso">
-        <figure class="entrar__foto">
-          <img src="assets/img/hero/hero-b.webp" alt="Modelo vestindo uma peça da La Belle Modas" width="1200" height="1500">
-          <figcaption>
-            <b>Bem-vinda à La Belle</b>
-            <p>Entre para acompanhar seus pedidos, salvar endereços e falar direto com a loja.</p>
-          </figcaption>
-        </figure>
+    <!-- ============== CONFERINDO A SESSÃO / SEM SESSÃO ==============
+         Antes aqui havia um "portão" com um botão que abria a área da cliente
+         sem sessão nenhuma ("Ver a área da cliente"). Era uma porta falsa:
+         escondia a tela em vez de proteger dado. Saiu.
 
-        <div class="entrar__lado">
-          <div class="entrar__caixa">
-
-            <div class="cx-marca">
-              <img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">
-              <b>La <i>Belle</i></b>
-            </div>
-
-            <div class="entrar__abas">
-              <a class="on" href="login.html">Entrar</a>
-              <a href="cadastro.html">Criar conta</a>
-            </div>
-
-            <h1 class="cx-titulo">Bem-vinda de volta</h1>
-            <p class="cx-sub">Entre na sua conta para acompanhar seus pedidos e suas informações.</p>
-
-            <div class="cx-aviso">
-              <span data-ico="info" aria-hidden="true"></span>
-              <p><b>Demonstração visual.</b> Este projeto ainda não tem servidor de login, então não
-              existe entrar com e-mail e senha de verdade. Você pode ver a área da cliente com
-              dados de exemplo, sem digitar nada.</p>
-            </div>
-
-            <div class="cx-form__acoes" style="margin-top:0">
-              <a class="bt bt--rosa bt--largo" href="login.html">Entrar na minha conta</a>
-              <button class="bt bt--vazio bt--largo" type="button" id="btDemo">Ver a área da cliente</button>
-            </div>
-
-            <p class="cx-troca">Ainda não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
-
-            <div class="cx-selos">
-              <span><span data-ico="caminhao" aria-hidden="true"></span> Enviamos para todo o Brasil</span>
-              <span><span data-ico="troca" aria-hidden="true"></span> 7 dias para troca on-line</span>
-            </div>
-
-            <p class="cx-voltar-loja"><a class="lk-seta" href="index.html">Voltar para a loja</a></p>
+         Estas duas caixas são só o estado da tela enquanto a resposta do
+         servidor não chega, e o aviso de que é preciso entrar. Quem decide o
+         que aparece é o JS, a partir de /api/auth/me. -->
+    <section id="conferindo" class="entrar entrar--pagina pagina-acesso" aria-live="polite">
+      <div class="entrar__lado">
+        <div class="entrar__caixa">
+          <div class="cx-marca">
+            <img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">
+            <b>La <i>Belle</i></b>
           </div>
+          <h1 class="cx-titulo">Um instante…</h1>
+          <p class="cx-sub">Conferindo a sua sessão.</p>
         </div>
       </div>
     </section>
 
-    <!-- ========================= ÁREA DA CLIENTE ========================= -->
-    <section id="painel" class="oculto">
+    <section id="semSessao" class="entrar entrar--pagina pagina-acesso oculto">
+      <div class="entrar__lado">
+        <div class="entrar__caixa">
+          <div class="cx-marca">
+            <img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">
+            <b>La <i>Belle</i></b>
+          </div>
+
+          <div class="entrar__abas">
+            <a class="on" href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+          </div>
+
+          <h1 class="cx-titulo">Bem-vinda de volta</h1>
+          <p class="cx-sub">Entre na sua conta para acompanhar seus pedidos e as suas informações.</p>
+
+          <div class="cx-form__acoes" style="margin-top:0">
+            <a class="bt bt--rosa bt--largo" href="login.html">Entrar na minha conta</a>
+            <a class="bt bt--vazio bt--largo" href="cadastro.html">Criar uma conta</a>
+          </div>
+
+          <div class="cx-selos">
+            <span><span data-ico="caminhao" aria-hidden="true"></span> Enviamos para todo o Brasil</span>
+            <span><span data-ico="troca" aria-hidden="true"></span> 7 dias para troca on-line</span>
+          </div>
+
+          <p class="cx-voltar-loja"><a class="lk-seta" href="index.html">Voltar para a loja</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= ÁREA DA CLIENTE =========================
+         id="areaConta" — nunca "painel": esse nome ja e do mega-menu que o
+         ui.js injeta acima. Dois ids iguais fazem o JS pegar o elemento
+         errado em silencio. -->
+    <section id="areaConta" class="oculto">
       <div class="conta" style="padding-bottom:clamp(3rem,7vw,6rem)">
         <aside class="conta__menu" aria-label="Seções da conta">
           <div class="conta__quem">
@@ -120,13 +131,15 @@
   </div>
 </main>
 
-<!-- faixa de aviso do modo demonstração: só aparece com a sessão de exemplo -->
-<div class="cx-faixa-demo" id="modoDemo" role="status">
-  <div class="envelope cx-faixa-demo__dentro">
+<!-- Faixa de aviso da área da cliente: aparece sempre que a área está aberta
+     (body.tem-conta). Diz a verdade sobre o que ainda é exemplo — só os
+     pedidos e os endereços. Os dados da conta e a senha são reais. -->
+<div class="cx-faixa-aviso" role="status">
+  <div class="envelope cx-faixa-aviso__dentro">
     <span data-ico="info" aria-hidden="true"></span>
-    <p><b>Modo demonstração.</b> Os pedidos, endereços e dados abaixo são exemplos para você ver a
-    área da cliente. Nada é real e nada fica salvo no seu navegador.</p>
-    <button class="cx-bt-mini" type="button" id="sairDemo">Sair do modo demonstração</button>
+    <p><b>Pedidos e endereços de exemplo.</b> A sua conta, a sua sessão e a sua senha são de
+    verdade — mas o histórico de pedidos e os endereços ainda são dados de demonstração,
+    porque o backend de pedidos não está ligado.</p>
   </div>
 </div>
 
@@ -136,6 +149,7 @@
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/conta-ui.js"></script>
 <script src="assets/js/conta-mock.js"></script>
+<script src="assets/js/conta-api.js"></script>
 <script src="assets/js/conta-app.js"></script>
 <script>
 (function () {

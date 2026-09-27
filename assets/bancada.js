@@ -49,6 +49,27 @@ function listarCss() {
   });
   return [...set].sort();
 }
+/* Mesmo remedio para os SCRIPTS, e pelo mesmo motivo. A lista estava fixa em
+   ui.js + dados.js, entao conta-app.js, conta-ui.js, conta-api.js e
+   conta-mock.js NUNCA eram varridos: qualquer classe inventada dentro deles
+   passava sem prova. A lista volta a ser descoberta a partir das paginas. */
+function listarJs() {
+  const set = new Set();
+  listarHtml().forEach((arq) => {
+    for (const m of ler(arq).matchAll(/src="(assets\/js\/[A-Za-z0-9._\-]+\.js)"/g)) set.add(m[1]);
+  });
+  return [...set].sort();
+}
+
+/* Ganchos que so existem no JS, sem regra propria no CSS.
+   `.cx-ic` nao tem seletor: ele e o involucro do icone, e quem define o
+   tamanho e o container (.cx-atalho svg, .cx-voltar svg, .cx-bt-mini svg,
+   .cx-aviso svg, .cx-cancelado svg). E a mesma categoria de `.on` e
+   `.cartao__a`: classe de comportamento, nao de aparencia.
+   A lista e CURTA e NOMEADA de proposito — um "ignorar tudo que so existe no
+   JS" deixaria a prova C cega. O controle negativo D2b prova que ela
+   continua estreita: uma classe inventada fora desta lista ainda reprova. */
+const GANCHOS_JS = new Set(["cx-ic"]);
 
 /* ========================================================== A. DADOS ====== */
 secao("A. dados.js contra o disco");
@@ -300,9 +321,9 @@ function classesDefinidas() {
 
 function classesUsadas() {
   const set = new Set();
-  const arquivos = listarHtml().map((f) => f)
-    .concat(["assets/js/ui.js", "assets/js/dados.js"]);
+  const arquivos = listarHtml().map((f) => f).concat(listarJs());
   arquivos.forEach((f) => {
+    if (!existe(f)) return;
     const txt = ler(f);
     for (const m of txt.matchAll(/class="([^"]*)"/g)) {
       const bruto = m[1];
@@ -326,7 +347,9 @@ const usadas = classesUsadas();
 /* Reprovam apenas as classes que NAO aparecem em lugar nenhum do CSS — nem como
    regra propria, nem como estado combinado. Assim a prova continua capaz de achar
    uma classe inventada (ela nao esta em citadas), sem acusar '.on' de inexistente. */
-const semDefinicao = [...usadas].filter((c) => !citadasCss.has(c)).sort();
+const semDefinicao = [...usadas]
+  .filter((c) => !citadasCss.has(c) && !GANCHOS_JS.has(c))
+  .sort();
 
 ok(semDefinicao.length === 0,
   "toda classe usada aparece em algum lugar do CSS",
@@ -339,6 +362,48 @@ ok(listarCss().indexOf("assets/css/conta.css") > -1,
   "varridas: " + listarCss().join(", "));
 ok(listarCss().indexOf("assets/css/site.backup.css") === -1,
   "a varredura NAO varre a copia de seguranca (site.backup.css) que nenhuma pagina carrega");
+
+/* A varredura de classes tem de alcancar os arquivos da area do cliente.
+   ATENCAO ao que se mede aqui. Provar `listarJs().indexOf("conta-app.js")`
+   nao prova nada: listarJs() e so um helper, e a prova C poderia continuar
+   lendo a lista fixa enquanto esse teste ficasse verde. (Aconteceu: a
+   primeira versao desta prova passou com a lista fixa de volta.)
+   O que se mede e o conjunto REAL que a prova C usa: `usadas`. Se alguma
+   classe que SO existe em conta-app.js nao estiver la, a varredura nao
+   alcancou o arquivo — e ai a prova C esta cega para ele.                */
+const SO_EM_CONTA_APP = [
+  "cx-cabeca", "cx-grade", "cx-cartao", "cx-pedido", "cx-pedido__topo",
+  "cx-item", "cx-endereco", "cx-bt-mini", "cx-form__grade", "cx-secao",
+  "cx-linha__etapa", "cx-endereco--novo"
+];
+SO_EM_CONTA_APP.forEach(function (c) {
+  ok(usadas.has(c),
+    "a varredura de classes alcancou conta-app.js (achou ." + c + ")");
+});
+ok(listarJs().indexOf("assets/js/conta-app.js") > -1,
+  "conta-app.js esta entre os scripts que as paginas carregam",
+  "varridos: " + listarJs().join(", "));
+/* bancada.js e bancada-auth.js NAO sao carregados por pagina nenhuma: sao
+   instrumento, nao site. Se entrassem na lista, as classes escritas dentro
+   das provas virariam "classe usada" e a prova C passaria a conferir a si
+   mesma. */
+ok(listarJs().indexOf("assets/bancada.js") === -1,
+  "a varredura NAO inclui o proprio instrumento (bancada.js)");
+
+/* Um gancho de JS so e dispensado se NAO tiver regra propria E se nenhum dos
+   seus containers o dimensionar. Aqui: `.cx-ic` nao aparece em seletor
+   nenhum do CSS (senao nem precisaria estar na lista). */
+ok(!definidas.has("cx-ic"),
+  "o gancho cx-ic de fato nao tem regra propria no CSS (por isso e dispensado)");
+/* E o tamanho dele vem do container, em cada lugar onde ele aparece. Se um
+   container perder a regra que dimensiona o svg, ele deixa de ser meramente
+   dispensavel e passa a ser defeito — esta prova avisa antes. */
+["cx-atalho", "cx-voltar", "cx-bt-mini", "cx-aviso", "cx-cancelado"].forEach(function (cont) {
+  const re = new RegExp("\\." + cont + "[^{}]*\\ssvg\\s*\\{");
+  const css = listarCss().map((f) => cssDe(ler(f))).join("\n");
+  ok(re.test(css),
+    "o container ." + cont + " dimensiona o proprio svg (nao deixa o icone solto)");
+});
 
 /* ============================================== D. CONTROLE NEGATIVO ===== */
 secao("D. controle negativo (o instrumento precisa saber reprovar)");
@@ -355,13 +420,28 @@ ok(!existe(relFalso), "controle: e o detector de imagem a reprovaria (mesma func
 const classeFalsa = "zzz-classe-que-nao-existe";
 ok(!citadasCss.has(classeFalsa), "controle: classe falsa nao aparece em lugar nenhum do CSS");
 const usadasComFalsa = new Set(usadas); usadasComFalsa.add(classeFalsa);
-const detectadas = [...usadasComFalsa].filter((c) => !citadasCss.has(c));
+const detectadas = [...usadasComFalsa]
+  .filter((c) => !citadasCss.has(c) && !GANCHOS_JS.has(c));
 ok(detectadas.indexOf(classeFalsa) > -1,
   "controle: o detector de classe REPROVA a classe falsa",
   "detectadas: " + detectadas.join(", "));
 // e tambem ACEITA uma classe que so existe como estado combinado
 ok(citadasCss.has("on") && !definidas.has("on"),
   "controle: uma classe so de estado (.on) e aceita em vez de reprovada");
+
+/* D2b — a lista de ganchos de JS precisa continuar ESTREITA.
+   Um controle que provasse so "cx-ic e dispensado" nao provaria nada: ela
+   poderia ter virado um "dispensa tudo". Aqui o MESMO filtro da prova C
+   recebe uma classe inventada que nao esta em GANCHOS_JS e tem de reprovar.
+   E o par: cx-ic passa, zzz-nao-passa.                            */
+ok(GANCHOS_JS.has("cx-ic") && !GANCHOS_JS.has(classeFalsa),
+  "controle: os ganchos de JS sao uma lista fechada, nao um 'dispensa tudo'");
+const usadasComFalsa2 = new Set(usadas);
+usadasComFalsa2.add(classeFalsa);
+const detectadas2 = [...usadasComFalsa2]
+  .filter((c) => !citadasCss.has(c) && !GANCHOS_JS.has(c));
+ok(detectadas2.indexOf(classeFalsa) > -1,
+  "controle: com a lista de ganchos aplicada, a classe falsa AINDA reprova");
 
 /* D3 — o detector de ancora precisa achar uma ancora inexistente.
    Este controle usa a MESMA funcao da prova B2: se ele apenas olhasse o HTML cru,

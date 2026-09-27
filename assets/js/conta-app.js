@@ -3,19 +3,24 @@
    --------------------------------------------------------------------------
    Monta as secoes dentro de #painelConta e cuida da navegacao por hash.
 
-   POR QUE O MODO DEMONSTRACAO EXISTE:
-   o projeto nao tem servidor de login. Sem isso, a area do cliente seria
-   impossivel de ver — e ela precisa ser vista para ser aprovada. Entao a
-   sessao demo e um interruptor explicito, com faixa de aviso no topo,
-   ativado apenas quando a pessoa pede por ele.
+   DE ONDE VEM CADA COISA — a divisao que este arquivo respeita:
 
-   O QUE A SESSAO DEMO **NAO** FAZ:
-   - nao guarda senha (nenhum campo de senha passa por aqui);
-   - nao escreve nada em localStorage;
-   - nao finge autenticacao: na recarga da pagina ela volta ao login.
+   1. AUTENTICACAO e DADOS PESSOAIS sao REAIS. Quem decide se esta tela
+      abre e o servidor: `CONTA_API.AUTH.eu()` pergunta a /api/auth/me e,
+      se nao houver sessao valida, a pessoa vai para login.html. Nao existe
+      mais interruptor de demonstracao — antes havia um botao "Ver a area da
+      cliente" que abria esta tela sem sessao nenhuma; isso era uma porta
+      falsa e foi removido. O token da sessao mora num cookie HttpOnly: este
+      codigo NAO consegue le-lo, e nada de sessao fica em localStorage.
 
-   CONTRATO DO BACKEND: tudo vem de CONTA_MOCK.API (ver conta-mock.js).
-   Trocar o mock por fetch() liga a area do cliente de verdade.
+   2. PEDIDOS e ENDERECOS continuam DEMONSTRATIVOS nesta fase (o escopo da
+      rodada e autenticacao). Eles vem de CONTA_API.DEMO, que e o CONTA_MOCK
+      explicitamente marcado com `ehMock: true`. A faixa no topo da tela diz
+      isso com todas as letras, para ninguem confundir exemplo com pedido
+      de verdade.
+
+   Ou seja: o mock nao sustenta mais o acesso — ele so preenche o que ainda
+   nao tem backend. Trocar CONTA_API.DEMO por fetch() completa a area.
    ========================================================================== */
 
 var CONTA_APP = (function () {
@@ -30,7 +35,11 @@ var CONTA_APP = (function () {
     etapas: [],
     secao: "visao",
     pedidoAberto: null,
-    demo: false
+    /* So vira true depois que o SERVIDOR confirmou a sessao em
+       /api/auth/me. Enquanto for false, a area da cliente nao pode ser
+       montada nem abrir rota por hash — e o guarda que impede a tela de
+       existir sem autenticacao.                                          */
+    entrou: false
   };
 
   var R = {}; /* referencias do DOM */
@@ -52,6 +61,9 @@ var CONTA_APP = (function () {
     return '<span class="consulta">Valor sob consulta</span>';
   }
 
+  /* Rotulos de status: so nomes para exibir ("Em preparo", "A caminho"...).
+     Nao sao dado de cliente nenhum e nao sustentam acesso — por isso podem
+     continuar vindo do mock sem que o mock vire autenticacao.             */
   function statusDe(p) { return CONTA_MOCK.STATUS[p.status] || { nome: p.status, tipo: "" }; }
 
   function seloStatus(p) {
@@ -352,6 +364,11 @@ var CONTA_APP = (function () {
         '<small>' + escapa(resumoPecas({ itens: S.pedidos.reduce(function (a, p) { return a.concat(p.itens); }, []) })) + " no total</small></div>" +
       "</div>";
 
+    /* O e-mail vem do servidor e fica SOMENTE LEITURA nesta fase: trocar o
+       e-mail muda como a pessoa entra na conta, e isso pede confirmacao por
+       link — que depende do servico de e-mail ainda nao ligado. Melhor
+       travar do que aceitar uma troca que ninguem conseguiria confirmar.
+       Ver secoes 11 e 15 do escopo.                                      */
     h += '<form class="cx-form" id="formDados" novalidate>' +
       '<div class="cx-form__grade">' +
         '<label class="campo"><span class="rotulo">Nome completo</span>' +
@@ -359,7 +376,8 @@ var CONTA_APP = (function () {
         '<label class="campo"><span class="rotulo">Data de nascimento</span>' +
           '<input class="entrada" type="date" name="nascimento" value="' + escapa(c.nascimento || "") + '"></label>' +
         '<label class="campo"><span class="rotulo">E-mail</span>' +
-          '<input class="entrada" type="email" name="email" value="' + escapa(c.email) + '" autocomplete="email" required></label>' +
+          '<input class="entrada" type="email" name="email" value="' + escapa(c.email) + '" autocomplete="email" readonly aria-readonly="true"></label>' +
+        '<p class="cx-sub" style="grid-column:1/-1;margin:-.4rem 0 0">O e-mail que identifica a sua conta não pode ser trocado por aqui.</p>' +
         '<label class="campo"><span class="rotulo">WhatsApp</span>' +
           '<input class="entrada" type="tel" name="whatsapp" value="' + escapa(c.whatsapp) + '" inputmode="tel" autocomplete="tel"></label>' +
       "</div>" +
@@ -379,9 +397,9 @@ var CONTA_APP = (function () {
       "<p>Trocar a senha da sua conta La Belle.</p></div></div>" +
 
       '<div class="cx-aviso">' + icone("info") +
-      "<p><b>Esta tela não guarda a sua senha.</b> A troca de senha depende do servidor de login, " +
-      "que ainda não existe neste projeto. Os campos abaixo conferem as regras, mas nenhuma senha " +
-      "é enviada ou armazenada — nem aqui, nem no seu navegador.</p></div>" +
+      "<p><b>A sua senha é conferida e trocada no servidor.</b> Aqui só viaja pelo HTTPS, e o " +
+      "servidor guarda apenas o hash — nunca o que você digitou. Ao salvar, as outras sessões " +
+      "abertas são encerradas; esta continua valendo.</p></div>" +
 
       '<form class="cx-form" id="formSenha" novalidate>' +
         '<label class="campo"><span class="rotulo">Senha atual</span>' +
@@ -495,7 +513,7 @@ var CONTA_APP = (function () {
     });
     todos(R.caixa, "[data-principal]").forEach(function (b) {
       b.addEventListener("click", function () {
-        CONTA_MOCK.API.definirPrincipal(b.getAttribute("data-principal")).then(function (lista) {
+        CONTA_API.DEMO.definirPrincipal(b.getAttribute("data-principal")).then(function (lista) {
           S.enderecos = lista; render(); toast("Endereço principal atualizado");
         });
       });
@@ -504,7 +522,7 @@ var CONTA_APP = (function () {
       b.addEventListener("click", function () {
         var id = b.getAttribute("data-excluir");
         if (!window.confirm("Excluir este endereço?")) return;
-        CONTA_MOCK.API.excluirEndereco(id).then(function (lista) {
+        CONTA_API.DEMO.excluirEndereco(id).then(function (lista) {
           S.enderecos = lista; render(); toast("Endereço excluído");
         });
       });
@@ -569,7 +587,7 @@ var CONTA_APP = (function () {
       principal: g("principal").checked
     };
 
-    CONTA_MOCK.API.salvarEndereco(dados).then(function (lista) {
+    CONTA_API.DEMO.salvarEndereco(dados).then(function (lista) {
       S.enderecos = lista;
       S.secao = "enderecos";
       render();
@@ -584,32 +602,46 @@ var CONTA_APP = (function () {
     CONTA_UI.limparTudo(f);
 
     var nome = f.querySelector("[name=nome]");
-    var email = f.querySelector("[name=email]");
     var whats = f.querySelector("[name=whatsapp]");
     var nasc = f.querySelector("[name=nascimento]");
 
     if (nome.value.trim().length < 3) CONTA_UI.marcarErro(nome, "Digite o seu nome completo.");
     else if (nome.value.trim().indexOf(" ") < 1) CONTA_UI.marcarErro(nome, "Inclua também o sobrenome.");
-    if (!CONTA_UI.ehEmail(email.value)) CONTA_UI.marcarErro(email, "Confira o seu e-mail, por favor.");
     if (CONTA_UI.digitos(whats.value).length < 10) CONTA_UI.marcarErro(whats, "Digite o DDD e o número.");
     if (CONTA_UI.focarPrimeiroErro(f)) return;
 
-    CONTA_MOCK.API.atualizarCliente({
+    /* O e-mail NAO vai no corpo: o servidor ignora o que o navegador manda
+       para identificar quem esta sendo editado — quem decide isso e o cookie
+       de sessao. Mandar o e-mail so criaria a ilusao de que ele pode mudar
+       por aqui. Ver secao 11 do escopo.                                   */
+    var botao = f.querySelector('button[type="submit"]');
+    botao.disabled = true;
+    CONTA_API.CONTA.atualizarCliente({
       nome: nome.value.trim(),
-      email: email.value.trim(),
-      whatsapp: whats.value.trim(),
+      whatsapp: CONTA_UI.digitos(whats.value),
       nascimento: nasc.value
     }).then(function (c) {
+      botao.disabled = false;
       S.cliente = c;
       pintarQuem();
       render();
       toast("Os seus dados foram salvos");
+    })["catch"](function (falha) {
+      botao.disabled = false;
+      if (falha && falha.status === 401) { sairParaLogin(); return; }
+      if (falha && falha.campo) {
+        var alvo = f.querySelector("[name=" + falha.campo + "]");
+        if (alvo) { CONTA_UI.marcarErro(alvo, falha.mensagem || falha.message); CONTA_UI.focarPrimeiroErro(f); return; }
+      }
+      toast((falha && (falha.mensagem || falha.message)) || "Não foi possível salvar agora.");
     });
   }
 
   /* -------------------------------------------------- envio: senha
-     Nenhuma senha e guardada. O formulario confere as regras, avisa que a
-     troca depende do backend e limpa os campos em seguida.               */
+     Troca REAL: a senha atual e a nova vao no corpo do POST (por HTTPS) e o
+     servidor confere a atual antes de gravar o hash da nova. Nada de senha
+     fica neste navegador — nem em variavel, nem em storage: os campos sao
+     limpos assim que a resposta chega.                                     */
   function submitSenha(e) {
     e.preventDefault();
     var f = e.target;
@@ -629,14 +661,29 @@ var CONTA_APP = (function () {
 
     var botao = f.querySelector('button[type="submit"]');
     botao.disabled = true;
-    CONTA_MOCK.API.trocarSenha({ nova: nova.value })
-      ["catch"](function () {})
+
+    function limpar() {
+      f.reset();
+      var fEl = f.querySelector(".forca");
+      if (fEl) { fEl.setAttribute("data-nivel", "0"); f.querySelector(".forca__txt").textContent = "Força da senha"; }
+      botao.disabled = false;
+    }
+
+    CONTA_API.CONTA.trocarSenha({ atual: atual.value, nova: nova.value, confirmar: nova2.value })
       .then(function () {
-        f.reset();
-        var fEl = f.querySelector(".forca");
-        if (fEl) { fEl.setAttribute("data-nivel", "0"); f.querySelector(".forca__txt").textContent = "Força da senha"; }
-        botao.disabled = false;
-        toast("Pronto! Com o servidor ligado, a senha seria alterada agora");
+        limpar();
+        /* O servidor derruba as outras sessoes e mantem esta. Por isso a
+           pessoa continua na tela, em vez de ser jogada para o login.     */
+        toast("Senha alterada. As outras sessões foram encerradas.");
+      })
+      ["catch"](function (falha) {
+        limpar();
+        if (falha && falha.status === 401 && !falha.campo) { sairParaLogin(); return; }
+        if (falha && falha.campo) {
+          var alvo = f.querySelector("[name=" + falha.campo + "]");
+          if (alvo) { CONTA_UI.marcarErro(alvo, falha.mensagem || falha.message); CONTA_UI.focarPrimeiroErro(f); return; }
+        }
+        toast((falha && (falha.mensagem || falha.message)) || "Não foi possível alterar a senha agora.");
       });
   }
 
@@ -647,15 +694,37 @@ var CONTA_APP = (function () {
     sel(R.quem, "[data-quem-email]").textContent = S.cliente ? S.cliente.email : "—";
   }
 
+  /* Sem sessao valida nao existe Area do Cliente: volta para o login.
+     Chamado tanto na abertura quanto quando o servidor responde 401 no meio
+     do uso (sessao vencida, ou derrubada por uma troca de senha em outro
+     aparelho). E a unica saida possivel — nao ha tela a mostrar.          */
+  function sairParaLogin() {
+    location.href = "login.html";
+  }
+
+  /* SAIR DA CONTA de verdade: o servidor apaga a linha da sessao no banco e
+     manda o navegador descartar o cookie. So depois disso a area some da
+     tela — e, mesmo que a chamada falhe (rede caindo), a area some do mesmo
+     jeito: nao existe "sair" que deixe a conta aberta na tela.            */
   function sairDaConta() {
-    CONTA_MOCK.API.sair().then(function () {
-      S.demo = false;
-      document.body.classList.remove("em-demo");
-      R.painel.classList.add("oculto");
-      R.portao.classList.remove("oculto");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      toast("Você saiu da conta");
-    });
+    var bt = document.querySelector("#sair");
+    if (bt) bt.disabled = true;
+
+    CONTA_API.AUTH.sair()
+      ["catch"](function () { /* a saida local acontece de qualquer forma */ })
+      .then(function () {
+        S.entrou = false;
+        S.cliente = null;
+        S.pedidos = [];
+        S.enderecos = [];
+        S.secao = "visao";
+        if (bt) bt.disabled = false;
+        if (R.painel) R.painel.classList.add("oculto");
+        document.body.classList.remove("tem-conta");
+        if (R.conferindo) R.conferindo.classList.add("oculto");
+        if (R.semSessao) R.semSessao.classList.remove("oculto");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
   }
 
   /* roteamento por hash: #visao, #pedidos, #pedido/LB-24960, #enderecos,
@@ -678,12 +747,16 @@ var CONTA_APP = (function () {
 
   /* ========================================================= 9. INICIO */
   function iniciar() {
-    R.portao = document.querySelector("#portao");
-    R.painel = document.querySelector("#painel");
+    /* #areaConta, e nao #painel: o ui.js injeta o mega-menu com id="painel"
+       na casca do topo, que vem ANTES desta secao. Com o mesmo id, o
+       querySelector devolvia o mega-menu e a area da cliente nunca abria.
+       Ver prova I de bancada-conta.js.                                    */
+    R.painel = document.querySelector("#areaConta");
     R.caixa = document.querySelector("#painelConta");
     R.menu = document.querySelector(".conta__menu");
     R.quem = document.querySelector(".conta__quem");
-    R.demo = document.querySelector("#modoDemo");
+    R.conferindo = document.querySelector("#conferindo");
+    R.semSessao = document.querySelector("#semSessao");
 
     /* abas do menu lateral */
     if (R.menu) {
@@ -695,25 +768,8 @@ var CONTA_APP = (function () {
     var btSair = document.querySelector("#sair");
     if (btSair) btSair.addEventListener("click", sairDaConta);
 
-    /* modo demonstracao: só entra se a pessoa pedir */
-    var btDemo = document.querySelector("#btDemo");
-    if (btDemo) {
-      btDemo.addEventListener("click", function () {
-        R.portao.classList.add("oculto");
-        R.painel.classList.remove("oculto");
-        document.body.classList.add("em-demo");
-        S.demo = true;
-        carregar();
-      });
-    }
-
-    if (R.demo) {
-      var btSairDemo = document.querySelector("#sairDemo");
-      if (btSairDemo) btSairDemo.addEventListener("click", sairDaConta);
-    }
-
     window.addEventListener("hashchange", function () {
-      if (!S.demo) return;
+      if (!S.entrou) return;   /* sem sessao confirmada, nenhuma rota abre */
       var r = rotaDoHash();
       var partes = r.split("/");
       if (partes[0] === "pedido" && partes[1]) { S.secao = "pedido"; S.pedidoAberto = partes[1]; }
@@ -722,14 +778,70 @@ var CONTA_APP = (function () {
       else S.secao = TITULOS[partes[0]] ? partes[0] : S.secao;
       render();
     });
+
+    /* QUEM DECIDE SE ESTA TELA ABRE E O SERVIDOR.
+       Perguntamos a /api/auth/me. O cookie de sessao (HttpOnly) vai junto
+       automaticamente; o codigo desta pagina nao le o token e nao guarda
+       nada. Resposta valida -> monta a area. 401 -> login.
+       Nao existe caminho alternativo: e isto que impede conta.html — que e
+       um arquivo publico — de mostrar a area sem autenticacao.            */
+    CONTA_API.AUTH.eu()
+      .then(function (cliente) {
+        S.cliente = cliente;
+        S.entrou = true;
+        document.body.classList.add("tem-conta");
+        if (R.conferindo) R.conferindo.classList.add("oculto");
+        if (R.semSessao) R.semSessao.classList.add("oculto");
+        if (R.painel) R.painel.classList.remove("oculto");
+        carregar();
+      })
+      ["catch"](function (falha) {
+        /* 401 = nao ha sessao. Aqui ha duas saidas honestas e escolhemos a
+           mais util: em vez de jogar a pessoa para login.html no mesmo
+           instante (o que parece um soluço da pagina), mostramos o convite
+           para entrar. Quem clicar vai para o login de verdade, e o link
+           fica no endereco para quem quiser guardar ou compartilhar. Nos
+           outros pontos do codigo — sessao que cai no meio do uso — o
+           redirecionamento direto continua, porque ali a pessoa JA estava
+           dentro e a saida tem de ser imediata.                          */
+        if (falha && falha.status === 401) {
+          if (R.conferindo) R.conferindo.classList.add("oculto");
+          if (R.semSessao) R.semSessao.classList.remove("oculto");
+          return;
+        }
+        /* 503 = o servidor nao conseguiu nem olhar a sessao (banco fora do
+           ar). Nao da para afirmar "voce nao esta conectada" nem "esta":
+           a tela diz exatamente isso, em vez de escolher por conta propria. */
+        if (falha && falha.status === 503) {
+          if (R.conferindo) {
+            R.conferindo.innerHTML =
+              '<div class="entrar__lado"><div class="entrar__caixa">' +
+                '<div class="cx-marca"><img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">' +
+                "<b>La <i>Belle</i></b></div>" +
+                '<h1 class="cx-titulo">Não consegui abrir a sua conta</h1>' +
+                "<p class=\"cx-sub\">O servidor não respondeu agora. Tente de novo em instantes.</p>" +
+                '<div class="cx-form__acoes" style="margin-top:0">' +
+                  '<button class="bt bt--vazio bt--largo" type="button" id="btTentar">Tentar de novo</button>' +
+                "</div>" +
+              "</div></div>";
+            var bt = document.querySelector("#btTentar");
+            if (bt) bt.addEventListener("click", function () { location.reload(); });
+            CONTA_UI.pintarIcones(R.conferindo);
+          }
+          return;
+        }
+        sairParaLogin();
+      });
   }
 
+  /* Dados de pedidos e enderecos: AINDA mock, declarado como mock em
+     CONTA_API.DEMO. O cliente NUNCA vem daqui — quem manda o cliente e o
+     servidor, em /api/auth/me. */
   function carregar() {
-    var A = CONTA_MOCK.API;
-    Promise.all([A.cliente(), A.pedidos(), A.enderecos()]).then(function (r) {
-      S.cliente = r[0];
-      S.pedidos = r[1];
-      S.enderecos = r[2];
+    var A = CONTA_API.DEMO;
+    Promise.all([A.pedidos(), A.enderecos()]).then(function (r) {
+      S.pedidos = r[0];
+      S.enderecos = r[1];
       S.etapas = CONTA_MOCK.ETAPAS;
       pintarQuem();
 

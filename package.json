@@ -1,0 +1,16 @@
+{
+  "name": "la-belle-modas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site publico da La Belle Modas (HTML/CSS/JS) + APIs serverless de autenticacao da area da cliente.",
+  "scripts": {
+    "migrar": "node scripts/migrar.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "pg": "^8.11.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

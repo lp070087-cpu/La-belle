@@ -54,9 +54,8 @@
 
           <div class="cx-aviso">
             <span data-ico="info" aria-hidden="true"></span>
-            <p><b>Demonstração visual.</b> Os campos e as validações estão prontos, mas o projeto ainda
-            não tem banco de dados. Nada do que você digitar é enviado ou guardado — inclusive a senha,
-            que não é salva em lugar nenhum.</p>
+            <p>Crie a sua conta para acompanhar seus pedidos, salvar endereços e falar direto com a
+            loja. A sua senha é guardada com segurança, nunca em texto puro.</p>
           </div>
 
           <form id="formCadastro" novalidate>
@@ -135,6 +134,7 @@
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/conta-ui.js"></script>
 <script src="assets/js/conta-mock.js"></script>
+<script src="assets/js/conta-api.js"></script>
 <script>
 (function () {
   "use strict";
@@ -174,12 +174,14 @@
   /* termos e privacidade: os documentos de verdade ainda nao existem, e o
      projeto nao inventa texto juridico. A caixa diz isso com clareza.     */
   var TEXTOS = {
-    termos: "Os termos de uso desta loja serão publicados junto com a área do cliente, " +
-            "quando o cadastro passar a valer de verdade. Enquanto isso, as regras que já " +
-            "valem para as compras são as da página Trocas e devoluções, desta mesma loja.",
-    privacidade: "A política de privacidade será publicada junto com a área do cliente. " +
-                 "Enquanto não existe banco de dados, nada do que você digita nesta tela é " +
-                 "enviado ou guardado — nem o nome, nem o WhatsApp, nem a senha."
+    termos: "Ao criar a conta, você concorda em usar este cadastro para acompanhar os seus " +
+            "próprios pedidos, com dados verdadeiros. As regras que já valem para as compras " +
+            "são as da página Trocas e devoluções, desta mesma loja. Os termos de uso " +
+            "completos serão publicados pela loja.",
+    privacidade: "Guardamos apenas o necessário para atender você: nome, e-mail, WhatsApp e " +
+                 "data de nascimento. A sua senha é gravada como hash, nunca em texto puro, e " +
+                 "não é mostrada a ninguém. A política de privacidade completa será publicada " +
+                 "pela loja."
   };
   var ultimo = null;
   function mostrarTermos(qual) {
@@ -240,21 +242,34 @@
 
     if (CONTA_UI.focarPrimeiroErro(form)) return;
 
-    /* A senha sai de escopo aqui: nao e enviada, nao e guardada. */
-    vSenha = null;
-
+    /* O servidor valida tudo de novo. Aqui so mandamos. A senha viaja no
+       corpo do POST, por HTTPS, e nao fica guardada em lugar nenhum no
+       navegador. */
     botao.disabled = true;
-    CONTA_MOCK.API.criarConta({ nome: vNome, email: vEmail, whatsapp: whats.value })
-      ["catch"](function () {})
+    CONTA_API.AUTH.criarConta({
+      nome: vNome, email: vEmail, whatsapp: dWhats,
+      senha: vSenha, confirmar: vSenha2, aceite: true
+    })
       .then(function () {
-        sistema.innerHTML =
-          '<p><b>Cadastro ainda não enviado.</b> Os dados passaram por todas as validações, mas ' +
-          'este projeto está na fase de apresentação e não tem servidor nem banco de dados para ' +
-          'receber o seu cadastro. Nada foi guardado — e a senha nunca é armazenada em nenhum lugar.</p>' +
-          '<a class="bt bt--rosa bt--pequeno" href="' + LB.LOJA.whatsapp + '" target="_blank" rel="noopener">' +
-          'Falar com a loja no WhatsApp</a>';
-        sistema.classList.remove("oculto");
+        /* Conta criada e sessao aberta: entra direto na area da cliente. */
+        location.href = "conta.html";
+      })
+      .catch(function (falha) {
         botao.disabled = false;
+        var msg = (falha && (falha.mensagem || falha.message)) || "Não foi possível criar a conta agora.";
+
+        if (falha && falha.campo) {
+          var alvo = form.querySelector("[name=" + falha.campo + "]");
+          if (alvo) { CONTA_UI.marcarErro(alvo, msg); CONTA_UI.focarPrimeiroErro(form); return; }
+        }
+        /* E-mail ja cadastrado: o servidor responde com o campo "email". */
+        if (falha && falha.status === 409) {
+          CONTA_UI.marcarErro(email, msg);
+          CONTA_UI.focarPrimeiroErro(form);
+          return;
+        }
+        sistema.innerHTML = "<p>" + msg + "</p>";
+        sistema.classList.remove("oculto");
         sistema.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
   });

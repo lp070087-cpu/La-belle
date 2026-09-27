@@ -1,0 +1,19 @@
+# Segredos: NUNCA versionar. A DATABASE_URL do Neon entra aqui.
+.env
+.env.*
+!.env.example
+
+# Dependencias
+node_modules/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Vercel
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
