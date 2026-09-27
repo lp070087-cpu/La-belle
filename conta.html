@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minha conta — La Belle Modas</title>
+<meta name="description" content="Entre na sua conta La Belle Modas para acompanhar pedidos, rastrear entregas e ver os favoritos.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+<style>
+  /* entrada em modo pagina (dentro da casca), nao em tela cheia */
+  .entrar--pagina { min-height: 0; border: 1px solid var(--linha); border-radius: 6px; overflow: hidden; margin-bottom: clamp(3rem, 7vw, 6rem); }
+  .entrar--pagina .entrar__foto { min-height: 460px; }
+  /* no celular a foto nao pode empurrar o formulario para fora da tela:
+     min-height venceria o max-height de 46svh do breakpoint, entao zeramos aqui */
+  @media (max-width: 900px) {
+    .entrar--pagina .entrar__foto { min-height: 0; }
+  }
+  .conta__menu button.on i { background: var(--rosa); color: var(--tinta); }
+  .aviso-demo {
+    display: flex; gap: .7rem; align-items: flex-start;
+    padding: .85rem 1rem; border: 1px dashed var(--linha);
+    border-radius: 4px; background: #fcfbfa; margin-bottom: 1.6rem;
+  }
+  .aviso-demo svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 3px; color: var(--rosa-forte); }
+  .aviso-demo p { font-size: .78rem; color: var(--cinza); line-height: 1.7; }
+  .pedido__selo { display: inline-flex; align-items: center; gap: .4rem; }
+  .pedido__selo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--cinza-2); }
+  .pedido__selo--andamento::before { background: var(--rosa-forte); }
+  .pedido__selo--ok::before { background: #2f7a4f; }
+  .ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
+  .ficha > div { padding: 1rem 1.1rem; border: 1px solid var(--linha); border-radius: 4px; }
+  .ficha span { display: block; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--cinza); margin-bottom: .3rem; }
+  .ficha b { font-size: .92rem; font-weight: 400; }
+</style>
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Minha conta</span>
+    </nav>
+
+    <!-- ===================== PORTÃO: ENTRAR / CRIAR CONTA ===================== -->
+    <section id="portao">
+      <div class="entrar entrar--pagina">
+        <figure class="entrar__foto">
+          <img src="assets/img/hero/hero-b.webp" alt="La Belle Modas" width="1200" height="1500">
+          <figcaption>
+            <b>Bem-vinda à La Belle</b>
+            <p>Entre para acompanhar seus pedidos, salvar favoritos e falar direto com a loja.</p>
+          </figcaption>
+        </figure>
+
+        <div class="entrar__lado">
+          <div class="entrar__caixa">
+            <div class="entrar__abas" role="tablist">
+              <button type="button" role="tab" class="on" id="abaEntrar" aria-selected="true">Entrar</button>
+              <button type="button" role="tab" id="abaCriar" aria-selected="false">Criar conta</button>
+            </div>
+
+            <div class="aviso-demo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></svg>
+              <p>Esta é uma <strong>demonstração visual</strong>. Nenhum cadastro é salvo e não existe login real nesta fase do projeto.</p>
+            </div>
+
+            <!-- entrar -->
+            <form id="formEntrar" novalidate>
+              <label class="campo"><span class="rotulo">E-mail</span>
+                <input class="entrada" type="email" name="email" autocomplete="email" placeholder="voce@email.com" required></label>
+              <label class="campo"><span class="rotulo">Senha</span>
+                <input class="entrada" type="password" name="senha" autocomplete="current-password" placeholder="••••••••" required></label>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin:.3rem 0 1.3rem">
+                <label class="escolha"><input type="checkbox" checked><span>Continuar conectada</span></label>
+                <button class="lk" type="button" id="esqueci" style="font-size:.8rem">Esqueci a senha</button>
+              </div>
+              <button class="bt bt--rosa bt--largo" type="submit">Entrar</button>
+            </form>
+
+            <!-- criar -->
+            <form id="formCriar" class="oculto" novalidate>
+              <label class="campo"><span class="rotulo">Nome completo</span>
+                <input class="entrada" name="nome" autocomplete="name" required></label>
+              <label class="campo"><span class="rotulo">E-mail</span>
+                <input class="entrada" type="email" name="email" autocomplete="email" required></label>
+              <label class="campo"><span class="rotulo">Telefone com DDD</span>
+                <input class="entrada" name="fone" inputmode="tel" autocomplete="tel" placeholder="(00) 00000-0000"></label>
+              <label class="campo"><span class="rotulo">Senha</span>
+                <input class="entrada" type="password" name="senha" autocomplete="new-password" placeholder="mínimo de 6 caracteres" required></label>
+              <label class="escolha" style="margin:.3rem 0 1.3rem"><input type="checkbox" id="aceite">
+                <span>Quero receber as novidades e promoções da La Belle</span></label>
+              <button class="bt bt--rosa bt--largo" type="submit">Criar minha conta</button>
+            </form>
+
+            <p class="entrar__troca">
+              Prefere falar direto com a loja?
+              <a class="lk" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Atendimento pelo WhatsApp</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ PAINEL DA CONTA ============================ -->
+    <section id="painel" class="oculto">
+      <div class="conta" style="padding-bottom:clamp(3rem,7vw,6rem)">
+        <aside class="conta__menu" aria-label="Seções da conta">
+          <div class="conta__quem">
+            <b id="quemNome">Visitante</b>
+            <span id="quemEmail">—</span>
+          </div>
+          <ul>
+            <li><button type="button" data-aba="pedidos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>
+              Meus pedidos <i>3</i></button></li>
+            <li><button type="button" data-aba="rastreio">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.8"/></svg>
+              Rastrear pedido</button></li>
+            <li><button type="button" data-aba="favoritos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21.4l8.8-8.7a5 5 0 0 0 0-7.1z"/></svg>
+              Favoritos <i data-conta-favoritos>0</i></button></li>
+            <li><button type="button" data-aba="enderecos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-7h6v7"/></svg>
+              Endereços</button></li>
+            <li><button type="button" data-aba="dados">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Meus dados</button></li>
+            <li><button type="button" id="sair">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+              Sair</button></li>
+          </ul>
+        </aside>
+
+        <div class="painel-conta" id="painelConta"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  LB.iniciar({ pagina: "conta" });
+
+  /* ==========================================================================
+     PEDIDOS DE EXEMPLO
+     Conteúdo de demonstração da interface. Nenhum valor é exibido porque os
+     materiais da loja não trazem preços — ver ANALISE.md.
+     ========================================================================== */
+  var ETAPAS = ["Pedido confirmado", "Em separação", "Enviado", "Em trânsito", "Saiu para entrega", "Entregue"];
+
+  var PEDIDOS_DEMO = [
+    {
+      id: "LB-24960", data: "22/09/2026", etapa: 1, entrega: "Transportadora",
+      destino: "Exemplo — São Paulo/SP", rastreio: null,
+      itens: [{ id: "p03", cor: "Rosa claro", tam: "M" }, { id: "p13", cor: "Branco", tam: "P" }]
+    },
+    {
+      id: "LB-24817", data: "12/09/2026", etapa: 3, entrega: "Transportadora",
+      destino: "Exemplo — Recife/PE", rastreio: "LB24817BR0001DEMO",
+      itens: [{ id: "p05", cor: "Verde limão", tam: "M" }, { id: "p08", cor: "Laranja", tam: "G" }, { id: "p01", cor: "Branco", tam: "P" }]
+    },
+    {
+      id: "LB-24702", data: "30/08/2026", etapa: 5, entrega: "Entrega local",
+      destino: "Combinada direto com a loja", rastreio: null,
+      itens: [{ id: "p09", cor: "Sortido", tam: "M" }]
+    }
+  ];
+
+  var CHAVE = "labelle_conta_demo_v1";
+  var conta = null;
+  try { conta = JSON.parse(localStorage.getItem(CHAVE) || "null"); } catch (e) { conta = null; }
+
+  var portao = document.querySelector("#portao");
+  var painel = document.querySelector("#painel");
+  var caixa = document.querySelector("#painelConta");
+  var abaAtual = "pedidos";
+  var pedidoAberto = null;
+
+  function escapa(t) { return LB.escapa(t); }
+  function estadoPedido(p) {
+    if (p.etapa >= 5) return { txt: "Entregue", cls: "ok" };
+    if (p.etapa >= 1) return { txt: ETAPAS[p.etapa], cls: "andamento" };
+    return { txt: ETAPAS[p.etapa], cls: "" };
+  }
+
+  /* ------------------------------------------------------------- portao */
+  function trocarAba(qual) {
+    var ehEntrar = qual === "entrar";
+    document.querySelector("#abaEntrar").classList.toggle("on", ehEntrar);
+    document.querySelector("#abaCriar").classList.toggle("on", !ehEntrar);
+    document.querySelector("#abaEntrar").setAttribute("aria-selected", ehEntrar ? "true" : "false");
+    document.querySelector("#abaCriar").setAttribute("aria-selected", ehEntrar ? "false" : "true");
+    document.querySelector("#formEntrar").classList.toggle("oculto", !ehEntrar);
+    document.querySelector("#formCriar").classList.toggle("oculto", ehEntrar);
+  }
+  document.querySelector("#abaEntrar").addEventListener("click", function () { trocarAba("entrar"); });
+  document.querySelector("#abaCriar").addEventListener("click", function () { trocarAba("criar"); });
+
+  function abrirConta(dados) {
+    conta = dados;
+    try { localStorage.setItem(CHAVE, JSON.stringify(conta)); } catch (e) {}
+    portao.classList.add("oculto");
+    painel.classList.remove("oculto");
+    document.querySelector("#quemNome").textContent = conta.nome || "Cliente La Belle";
+    document.querySelector("#quemEmail").textContent = conta.email || "—";
+    irPara(location.hash.replace("#", "").split("/")[0] || "pedidos");
+  }
+
+  document.querySelector("#formEntrar").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var em = e.target.querySelector("[name=email]").value.trim();
+    if (em.indexOf("@") < 1) { LB.toast("Confira o seu e-mail, por favor"); return; }
+    LB.toast("Bem-vinda de volta!");
+    abrirConta({ nome: "", email: em });
+  });
+
+  document.querySelector("#formCriar").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = e.target;
+    var nome = f.querySelector("[name=nome]").value.trim();
+    var em = f.querySelector("[name=email]").value.trim();
+    var senha = f.querySelector("[name=senha]").value;
+    if (nome.length < 2) { LB.toast("Digite o seu nome completo"); return; }
+    if (em.indexOf("@") < 1) { LB.toast("Confira o seu e-mail, por favor"); return; }
+    if (senha.length < 6) { LB.toast("A senha precisa ter ao menos 6 caracteres"); return; }
+    LB.toast("Conta criada! Bem-vinda à La Belle");
+    abrirConta({ nome: nome, email: em, fone: f.querySelector("[name=fone]").value.trim() });
+  });
+
+  document.querySelector("#esqueci").addEventListener("click", function () {
+    LB.toast("Enviamos as instruções de recuperação por e-mail");
+  });
+
+  document.querySelector("#sair").addEventListener("click", function () {
+    conta = null;
+    try { localStorage.removeItem(CHAVE); } catch (e) {}
+    painel.classList.add("oculto");
+    portao.classList.remove("oculto");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    LB.toast("Você saiu da sua conta");
+  });
+
+  /* ---------------------------------------------------------- navegacao */
+  function irPara(aba) {
+    if (!conta) return;
+    aba = aba || "pedidos";
+    if (["pedidos", "rastreio", "favoritos", "enderecos", "dados"].indexOf(aba) < 0) aba = "pedidos";
+    if (aba !== "pedidos") pedidoAberto = null;
+    abaAtual = aba;
+    document.querySelectorAll("[data-aba]").forEach(function (b) {
+      b.classList.toggle("on", b.getAttribute("data-aba") === aba);
+    });
+    desenhar();
+    if (location.hash !== "#" + aba) history.replaceState(null, "", "#" + aba);
+  }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-aba]");
+    if (b) { irPara(b.getAttribute("data-aba")); return; }
+
+    var det = e.target.closest("[data-ver-pedido]");
+    if (det) {
+      pedidoAberto = det.getAttribute("data-ver-pedido");
+      abaAtual = "pedidos";
+      document.querySelectorAll("[data-aba]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-aba") === "pedidos"); });
+      desenhar();
+      history.replaceState(null, "", "#pedido/" + pedidoAberto);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (e.target.closest("[data-volta-pedidos]")) {
+      pedidoAberto = null;
+      irPara("pedidos");
+      return;
+    }
+    var apagar = e.target.closest("[data-apaga-endereco]");
+    if (apagar) {
+      apagar.closest(".endereco").remove();
+      LB.toast("Endereço removido");
+      return;
+    }
+    var marca = e.target.closest("[data-marca-endereco]");
+    if (marca) {
+      document.querySelectorAll(".endereco").forEach(function (a) { a.classList.remove("on"); });
+      marca.closest(".endereco").classList.add("on");
+      LB.toast("Endereço principal atualizado");
+    }
+  });
+
+  window.addEventListener("hashchange", function () {
+    var h = location.hash.replace("#", "");
+    if (h.indexOf("pedido/") === 0) { pedidoAberto = h.split("/")[1]; abaAtual = "pedidos"; desenhar(); }
+    else irPara(h);
+  });
+
+  document.addEventListener("lb:favoritos", function () { if (conta && abaAtual === "favoritos") desenhar(); });
+
+  /* -------------------------------------------------------------- vistas */
+  function avisoDemo(txt) {
+    return '<div class="aviso-demo">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></svg>' +
+      '<p>' + txt + '</p></div>';
+  }
+
+  function miniatura(it) {
+    var p = buscaProduto(it.id);
+    if (!p) return "";
+    return '<a class="midia" href="produto.html?id=' + p.id + '" title="' + escapa(p.nome) + '">' +
+      '<img src="' + LB.img("card", p.id + "-a") + '" alt="' + escapa(p.nome) + '" loading="lazy" width="720" height="900"></a>';
+  }
+
+  function linhaRastreio(p) {
+    return '<div class="rastreio">' + ETAPAS.map(function (nome, i) {
+      var cls = i < p.etapa ? "feito" : (i === p.etapa ? "atual" : "");
+      var quando = i < p.etapa ? '<span>Concluída</span>' : (i === p.etapa ? '<span>Etapa atual</span>' : '<span>Aguardando</span>');
+      return '<div class="etapa ' + cls + '">' +
+        '<div class="etapa__marca"><i></i></div>' +
+        '<div class="etapa__txt"><b>' + nome + '</b>' + quando + '</div>' +
+      '</div>';
+    }).join("") + '</div>';
+  }
+
+  function vistaPedidos() {
+    return '<section>' +
+      '<h2>Meus pedidos</h2>' +
+      '<p class="texto-medio">Acompanhe a situação de cada compra e veja os detalhes.</p>' +
+      avisoDemo('Os pedidos abaixo são <strong>exemplos</strong> para mostrar a interface. Não há integração com pagamento nem com transportadora nesta fase.') +
+      PEDIDOS_DEMO.map(function (p) {
+        var st = estadoPedido(p);
+        return '<article class="pedido">' +
+          '<div class="pedido__topo">' +
+            '<div><b>Pedido ' + p.id + '</b><br><span>Feito em ' + p.data + ' · ' + p.entrega + '</span></div>' +
+            '<span class="pedido__selo' + (st.cls ? " pedido__selo--" + st.cls : "") + '">' + st.txt + '</span>' +
+          '</div>' +
+          '<div class="pedido__corpo">' +
+            '<div class="pedido__itens">' + p.itens.map(miniatura).join("") + '</div>' +
+            '<div class="pedido__pe">' +
+              '<span class="texto-peq">' + p.itens.length + (p.itens.length > 1 ? " peças" : " peça") + ' · total sob consulta</span>' +
+              '<button class="bt bt--vazio bt--pequeno" type="button" data-ver-pedido="' + p.id + '">Ver detalhes</button>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }).join("") +
+    '</section>';
+  }
+
+  function vistaPedido(p) {
+    var st = estadoPedido(p);
+    return '<section>' +
+      '<button class="lk lk-seta" type="button" data-volta-pedidos style="margin-bottom:1.2rem">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M19 12H5M11 18 5 12l6-6"/></svg> Voltar aos pedidos</button>' +
+      '<h2>Pedido ' + p.id + '</h2>' +
+      '<p class="texto-medio">Feito em ' + p.data + ' · <span class="pedido__selo' + (st.cls ? " pedido__selo--" + st.cls : "") + '">' + st.txt + '</span></p>' +
+      '<div class="rastreio__caixa">' +
+        '<div><span>Entrega</span><b>' + p.entrega + '</b></div>' +
+        '<div><span>Destino</span><b>' + p.destino + '</b></div>' +
+        '<div><span>Código de rastreio</span><b class="codigo">' + (p.rastreio || "— ainda não gerado") + '</b></div>' +
+        '<div><span>Total</span><b>sob consulta</b></div>' +
+      '</div>' +
+      '<h3 class="t-3" style="margin-bottom:1.2rem">Acompanhe o seu pedido</h3>' +
+      linhaRastreio(p) +
+      '<h3 class="t-3" style="margin:2.2rem 0 1rem">Itens deste pedido</h3>' +
+      '<div class="itens"' + (p.itens.length ? '' : ' style="border-top:0"') + '>' +
+        p.itens.map(function (it) {
+          var pr = buscaProduto(it.id);
+          if (!pr) return "";
+          return '<div class="item">' +
+            '<div class="item__foto"><div class="midia"><img src="' + LB.img("card", pr.id + "-a") + '" alt="' + escapa(pr.nome) + '" loading="lazy" width="720" height="900"></div></div>' +
+            '<div class="item__corpo"><h3><a href="produto.html?id=' + pr.id + '">' + escapa(pr.nome) + '</a></h3>' +
+              '<p class="item__atrib">' + escapa(it.cor) + ' · Tam. ' + escapa(it.tam) + '</p>' +
+              '<a class="item__remover" href="trocas.html">Como trocar esta peça</a>' +
+            '</div>' +
+            '<div class="item__preco">' + LB.precoHTML() + '</div>' +
+          '</div>';
+        }).join("") +
+      '</div>' +
+      '<div style="margin-top:1.6rem;display:flex;gap:.6rem;flex-wrap:wrap">' +
+        '<a class="bt bt--rosa bt--pequeno" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Falar com a loja sobre este pedido</a>' +
+        '<a class="bt bt--vazio bt--pequeno" href="trocas.html">Política de trocas</a>' +
+      '</div>' +
+    '</section>';
+  }
+
+  function vistaRastreio() {
+    var comCodigo = PEDIDOS_DEMO.filter(function (p) { return p.rastreio && p.etapa < 5; });
+    return '<section>' +
+      '<h2>Rastrear pedido</h2>' +
+      '<p class="texto-medio">Veja em que etapa está a sua entrega.</p>' +
+      avisoDemo('O código e as etapas abaixo são <strong>demostrativos</strong>. A rastreabilidade real entra na fase de integração com a transportadora.') +
+      (comCodigo.length ? comCodigo.map(function (p) {
+        return '<article class="pedido">' +
+          '<div class="pedido__topo">' +
+            '<div><b>Pedido ' + p.id + '</b><br><span class="codigo">' + p.rastreio + '</span></div>' +
+            '<span class="pedido__selo pedido__selo--andamento">' + ETAPAS[p.etapa] + '</span>' +
+          '</div>' +
+          '<div class="pedido__corpo">' + linhaRastreio(p) +
+            '<div class="pedido__pe">' +
+              '<span class="texto-peq">' + p.entrega + ' · ' + p.destino + '</span>' +
+              '<button class="bt bt--vazio bt--pequeno" type="button" data-ver-pedido="' + p.id + '">Abrir pedido</button>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }).join("") : '<div class="vazio-painel"><b>Nenhuma entrega em andamento</b><p class="texto-peq">Quando um pedido for enviado, o rastreio aparece aqui.</p></div>') +
+      '<div class="historico">' +
+        '<div><time>22/09/2026</time><span>Pedido LB-24960 recebido — preparando para envio</span></div>' +
+        '<div><time>15/09/2026</time><span>Pedido LB-24817 despachado pela transportadora</span></div>' +
+        '<div><time>02/09/2026</time><span>Pedido LB-24702 entregue</span></div>' +
+      '</div>' +
+    '</section>';
+  }
+
+  function vistaFavoritos() {
+    var ids = LB.estado.favoritos;
+    var lista = PRODUTOS.filter(function (p) { return ids.indexOf(p.id) > -1; });
+    return '<section>' +
+      '<h2>Favoritos</h2>' +
+      '<p class="texto-medio">As peças que você guardou ficam aqui, neste navegador.</p>' +
+      (lista.length
+        ? '<div class="grade-produtos" id="gradeFavoritos"></div>'
+        : '<div class="vazio-painel">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21.4l8.8-8.7a5 5 0 0 0 0-7.1z"/></svg>' +
+            '<b>Você ainda não salvou peças</b>' +
+            '<p class="texto-peq">Toque no coração das peças que gostar e elas aparecem aqui.</p>' +
+            '<a class="bt bt--rosa bt--pequeno" href="loja.html">Ver a loja</a>' +
+          '</div>') +
+    '</section>';
+  }
+
+  function vistaEnderecos() {
+    return '<section>' +
+      '<h2>Endereços</h2>' +
+      '<p class="texto-medio">Onde a gente entrega as suas compras.</p>' +
+      avisoDemo('Endereço de <strong>exemplo</strong>, só para mostrar como a tela funciona. Nada é enviado para nenhum servidor.') +
+      '<div class="endereco on" style="margin-bottom:1.2rem">' +
+        '<div class="endereco__corpo">' +
+          '<b>Endereço de exemplo <span class="selo selo--rosa" style="margin-left:.5rem">principal</span></b>' +
+          '<p>Rua Exemplo, 120 — Apto 32<br>Bairro Exemplo<br>Cidade Exemplo — PE<br>CEP 00000-000</p>' +
+          '<div class="endereco__acoes">' +
+            '<button type="button" data-marca-endereco>Usar como principal</button>' +
+            '<button type="button" data-apaga-endereco>Remover</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<h3 class="t-3" style="margin:2rem 0 1rem">Adicionar um endereço</h3>' +
+      '<form id="formEndereco" novalidate>' +
+        '<div class="duas-colunas" style="margin-top:0">' +
+          '<label class="campo"><span class="rotulo">Rua e número</span><input class="entrada" autocomplete="address-line1"></label>' +
+          '<label class="campo"><span class="rotulo">Complemento</span><input class="entrada"></label>' +
+        '</div>' +
+        '<div class="duas-colunas">' +
+          '<label class="campo"><span class="rotulo">Bairro</span><input class="entrada" autocomplete="address-line2"></label>' +
+          '<label class="campo"><span class="rotulo">CEP</span><input class="entrada" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000"></label>' +
+        '</div>' +
+        '<div class="duas-colunas">' +
+          '<label class="campo"><span class="rotulo">Cidade</span><input class="entrada" autocomplete="address-level2"></label>' +
+          '<label class="campo"><span class="rotulo">Estado</span><input class="entrada" maxlength="2" autocomplete="address-level1"></label>' +
+        '</div>' +
+        '<button class="bt bt--rosa" type="submit" style="margin-top:1rem">Salvar endereço</button>' +
+      '</form>' +
+    '</section>';
+  }
+
+  function vistaDados() {
+    return '<section>' +
+      '<h2>Meus dados</h2>' +
+      '<p class="texto-medio">Mantenha seus dados atualizados para receber os pedidos sem atraso.</p>' +
+      '<div class="ficha" style="margin-bottom:1.6rem">' +
+        '<div><span>Nome</span><b>' + escapa(conta.nome || "— não informado") + '</b></div>' +
+        '<div><span>E-mail</span><b>' + escapa(conta.email || "—") + '</b></div>' +
+        '<div><span>Telefone</span><b>' + escapa(conta.fone || "— não informado") + '</b></div>' +
+      '</div>' +
+      '<form id="formDados" novalidate style="max-width:560px">' +
+        '<label class="campo"><span class="rotulo">Nome completo</span><input class="entrada" name="nome" value="' + escapa(conta.nome || "") + '"></label>' +
+        '<label class="campo"><span class="rotulo">E-mail</span><input class="entrada" type="email" name="email" value="' + escapa(conta.email || "") + '"></label>' +
+        '<label class="campo"><span class="rotulo">Telefone com DDD</span><input class="entrada" name="fone" inputmode="tel" value="' + escapa(conta.fone || "") + '" placeholder="(00) 00000-0000"></label>' +
+        '<label class="escolha" style="margin:.3rem 0 1.4rem"><input type="checkbox" checked><span>Quero receber novidades e promoções da La Belle</span></label>' +
+        '<button class="bt bt--rosa" type="submit">Salvar alterações</button>' +
+      '</form>' +
+      '<div class="historico" style="margin-top:2.4rem">' +
+        '<div><time>Segurança</time><span>Alterar senha, sair de todos os aparelhos e encerrar a conta ficam disponíveis na versão final.</span></div>' +
+      '</div>' +
+    '</section>';
+  }
+
+  function desenhar() {
+    if (!conta) return;
+
+    if (abaAtual === "pedidos" && pedidoAberto) {
+      var p = null;
+      PEDIDOS_DEMO.forEach(function (x) { if (x.id === pedidoAberto) p = x; });
+      caixa.innerHTML = p ? vistaPedido(p) : vistaPedidos();
+      return;
+    }
+
+    caixa.innerHTML =
+      abaAtual === "rastreio" ? vistaRastreio() :
+      abaAtual === "favoritos" ? vistaFavoritos() :
+      abaAtual === "enderecos" ? vistaEnderecos() :
+      abaAtual === "dados" ? vistaDados() :
+      vistaPedidos();
+
+    if (abaAtual === "favoritos") {
+      var ids = LB.estado.favoritos;
+      var lista = PRODUTOS.filter(function (x) { return ids.indexOf(x.id) > -1; });
+      if (lista.length) LB.desenharCartoes("#gradeFavoritos", lista);
+    }
+    if (abaAtual === "enderecos") {
+      var f = document.querySelector("#formEndereco");
+      if (f) f.addEventListener("submit", function (e) {
+        e.preventDefault();
+        LB.toast("Endereço salvo (demonstração)");
+        f.reset();
+      });
+    }
+    if (abaAtual === "dados") {
+      var g = document.querySelector("#formDados");
+      if (g) g.addEventListener("submit", function (e) {
+        e.preventDefault();
+        conta.nome = g.querySelector("[name=nome]").value.trim();
+        conta.email = g.querySelector("[name=email]").value.trim();
+        conta.fone = g.querySelector("[name=fone]").value.trim();
+        try { localStorage.setItem(CHAVE, JSON.stringify(conta)); } catch (err) {}
+        document.querySelector("#quemNome").textContent = conta.nome || "Cliente La Belle";
+        document.querySelector("#quemEmail").textContent = conta.email || "—";
+        LB.toast("Dados atualizados (demonstração)");
+        desenhar();
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------- inicio */
+  var h = location.hash.replace("#", "");
+  if (conta) abrirConta(conta);
+  else if (h) location.hash = "";
+})();
+</script>
+</body>
+</html>

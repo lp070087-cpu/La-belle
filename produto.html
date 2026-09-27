@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peça — La Belle Modas</title>
+<meta name="description" content="Detalhes da peça, tamanhos disponíveis e como comprar na La Belle Modas.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span>
+      <a href="loja.html" id="migalhaLoja">Loja</a> <span aria-hidden="true">/</span>
+      <span aria-current="page" id="migalhaPeca">Peça</span>
+    </nav>
+
+    <div class="prod" style="padding-bottom:clamp(2.5rem,6vw,5rem)" id="produto">
+      <!-- preenchido por JS -->
+    </div>
+
+    <section class="secao" style="border-top:1px solid var(--linha)">
+      <div class="cabeca linha-topo">
+        <div>
+          <span class="em em--rosa rev">Combina com</span>
+          <h2 class="t-2 rev" style="--atraso:60ms">Você também vai gostar</h2>
+        </div>
+        <a class="lk lk-seta rev" href="loja.html">Ver a loja <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="grade-produtos" id="gradeRelacionados"></div>
+    </section>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  LB.iniciar({ pagina: "produto" });
+
+  var qs = new URLSearchParams(location.search);
+  var id = qs.get("id") || "p01";
+  var p = buscaProduto(id);
+
+  if (!p) {
+    document.querySelector("#produto").innerHTML =
+      '<div class="loja__vazio" style="grid-column:1/-1"><b>Não encontramos essa peça</b>' +
+      '<p class="texto-peq" style="margin-bottom:1.4rem">Ela pode ter saído da arara. Veja as novidades da loja.</p>' +
+      '<a class="bt bt--rosa bt--pequeno" href="loja.html">Ver a loja</a></div>';
+    return;
+  }
+
+  document.title = p.nome + " — La Belle Modas";
+  document.querySelector("#migalhaPeca").textContent = p.nome;
+  document.querySelector("#migalhaLoja").textContent = p.cat;
+  document.querySelector("#migalhaLoja").href = "loja.html?cat=" + p.cat;
+
+  var indisponiveis = INDISPONIVEIS[p.id] || [];
+  var seloTam = indisponiveis.indexOf("M") > -1 ? (indisponiveis.indexOf("P") > -1 ? "G" : "P") : "M";
+  var corEscolhida = p.cor;
+  var qtd = 1;
+
+  var FOTOS = [
+    { src: LB.img("card", p.id + "-a"), alt: p.nome + " — " + p.cor },
+    { src: LB.img("card", p.id + "-b"), alt: p.nome + " — segunda foto" }
+  ];
+  var fotoAtual = 0;
+
+  var badges = p.badges.map(function (b) {
+    return '<span class="selo' + (b === "Novo" ? " selo--rosa" : "") + '">' + LB.escapa(b) + '</span>';
+  }).join("");
+
+  document.querySelector("#produto").innerHTML = '' +
+  '<div class="prod__galeria">' +
+    '<div class="prod__principal">' +
+      '<div class="midia"><img id="fotoPrincipal" src="' + FOTOS[0].src + '" alt="' + LB.escapa(FOTOS[0].alt) + '" width="720" height="900"></div>' +
+      '<div class="prod__principais">' +
+        FOTOS.map(function (f, i) {
+          return '<button type="button" data-foto="' + i + '"' + (i === 0 ? ' class="on"' : '') + ' aria-label="Foto ' + (i + 1) + '"></button>';
+        }).join("") +
+      '</div>' +
+    '</div>' +
+    '<div class="prod__tiras">' +
+      FOTOS.map(function (f, i) {
+        return '<button class="prod__tira' + (i === 0 ? " on" : "") + '" type="button" data-foto="' + i + '" aria-label="Ver foto ' + (i + 1) + '">' +
+          '<span class="midia"><img src="' + f.src + '" alt="" loading="lazy" width="720" height="900"></span></button>';
+      }).join("") +
+    '</div>' +
+  '</div>' +
+
+  '<div class="prod__info">' +
+    (badges ? '<div class="prod__selos">' + badges + '</div>' : '') +
+    '<h1>' + LB.escapa(p.nome) + '</h1>' +
+    '<div class="prod__meta">' +
+      '<span class="estrelas" aria-hidden="true">' + Array(6).join('<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 6.4 7 .9-5 4.9 1.2 7L12 18l-6.2 3.2L7 11.2 2 6.3l7-.9z"/></svg>') + '</span>' +
+      '<span>Peça nova na arara</span>' +
+      '<span aria-hidden="true">·</span>' +
+      '<span>Cor ' + LB.escapa(p.cor) + '</span>' +
+    '</div>' +
+
+    '<div class="prod__preco">' + LB.precoHTML() +
+      '<span class="nota">O valor, o frete e as formas de pagamento são informados pela loja no atendimento.</span>' +
+    '</div>' +
+
+    '<div class="prod__grupo">' +
+      '<span class="rotulo">Tamanho <a href="trocas.html">Guia e trocas</a></span>' +
+      '<div class="tamanhos" data-tams-produto>' +
+        TAMANHOS.map(function (t) {
+          var off = indisponiveis.indexOf(t) > -1;
+          return '<button type="button" data-tam="' + t + '"' + (off ? " disabled" : "") + (t === seloTam ? ' class="on"' : '') + '>' + t + '</button>';
+        }).join("") +
+      '</div>' +
+    '</div>' +
+
+    '<div class="prod__grupo">' +
+      '<span class="rotulo">Cor</span>' +
+      '<div class="cores" data-cores-produto>' +
+        p.cores.map(function (c, i) {
+          return '<button type="button" data-cor="' + c + '" style="background:' + c + '" aria-label="Cor ' + c + '"' + (i === 0 ? ' class="on"' : '') + '></button>';
+        }).join("") +
+      '</div>' +
+    '</div>' +
+
+    '<div class="prod__compra">' +
+      '<span class="passo">' +
+        '<button type="button" id="menos" aria-label="Diminuir quantidade">−</button>' +
+        '<span id="qtdValor" aria-live="polite">1</span>' +
+        '<button type="button" id="mais" aria-label="Aumentar quantidade">+</button>' +
+      '</span>' +
+      '<button class="bt bt--rosa" type="button" id="addSacola">Adicionar à sacola</button>' +
+    '</div>' +
+    '<button class="bt bt--vazio bt--largo" type="button" id="addFavorito">Salvar nos favoritos</button>' +
+
+    '<ul class="prod__extra">' +
+      '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Enviamos para todo o Brasil — você calcula o frete pelo CEP na sacola.</span></li>' +
+      '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-7h6v7"/></svg><span>Está perto da loja? Também tem entrega local.</span></li>' +
+      '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M18 2v5h-5M6 22v-5h5"/></svg><span>7 dias corridos para troca nas compras on-line, com a etiqueta original.</span></li>' +
+    '</ul>' +
+
+    '<div class="acordeao prod__acordeao">' +
+      '<div class="acordeao__item">' +
+        '<button class="acordeao__bt" type="button" aria-expanded="false">Como comprar<i></i></button>' +
+        '<div class="acordeao__painel"><div class="acordeao__dentro">' +
+          '<p class="texto-peq">Escolha o tamanho e a cor, adicione a peça à sacola e finalize. O valor final e o frete são confirmados pela loja pelo WhatsApp, junto com as formas de pagamento.</p>' +
+          '<p class="texto-peq"><a class="lk" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Falar com a loja agora</a></p>' +
+        '</div></div>' +
+      '</div>' +
+      '<div class="acordeao__item">' +
+        '<button class="acordeao__bt" type="button" aria-expanded="false">Trocas e devoluções<i></i></button>' +
+        '<div class="acordeao__painel"><div class="acordeao__dentro">' +
+          '<p class="texto-peq">Compras on-line têm <strong>7 dias corridos</strong> para troca e compras presenciais têm <strong>3 dias corridos</strong>, desde que a peça esteja em perfeito estado e com a etiqueta original.</p>' +
+          '<p class="texto-peq">Não realizamos troca de peças brancas, rendas, delicadas, tricô, promocionais, acessórios e bolsas.</p>' +
+          '<p class="texto-peq"><a class="lk" href="trocas.html">Ler a política completa</a></p>' +
+        '</div></div>' +
+      '</div>' +
+      '<div class="acordeao__item">' +
+        '<button class="acordeao__bt" type="button" aria-expanded="false">Entrega<i></i></button>' +
+        '<div class="acordeao__painel"><div class="acordeao__dentro">' +
+          '<p class="texto-peq">Na sacola você digita o seu CEP e escolhe entre a <strong>entrega local</strong> (combinada direto com a loja) e o envio por <strong>transportadora</strong> para todo o Brasil.</p>' +
+        '</div></div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  /* --------------------------------------------------------- interacoes */
+  function trocarFoto(i) {
+    fotoAtual = i;
+    document.querySelector("#fotoPrincipal").src = FOTOS[i].src;
+    document.querySelector("#fotoPrincipal").alt = FOTOS[i].alt;
+    var botoes = document.querySelectorAll("[data-foto]");
+    for (var k = 0; k < botoes.length; k++) {
+      botoes[k].classList.toggle("on", parseInt(botoes[k].getAttribute("data-foto"), 10) === i);
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    var f = e.target.closest("[data-foto]");
+    if (f) { trocarFoto(parseInt(f.getAttribute("data-foto"), 10)); return; }
+
+    var t = e.target.closest("[data-tams-produto] [data-tam]");
+    if (t && !t.disabled) {
+      var grupo = t.parentNode;
+      var bs = grupo.querySelectorAll("button");
+      for (var i = 0; i < bs.length; i++) bs[i].classList.remove("on");
+      t.classList.add("on"); seloTam = t.getAttribute("data-tam");
+      return;
+    }
+
+    var c = e.target.closest("[data-cores-produto] [data-cor]");
+    if (c) {
+      var g2 = c.parentNode; var bs2 = g2.querySelectorAll("button");
+      for (var j = 0; j < bs2.length; j++) bs2[j].classList.remove("on");
+      c.classList.add("on"); corEscolhida = c.getAttribute("data-cor");
+    }
+  });
+
+  document.querySelector("#mais").addEventListener("click", function () {
+    qtd = Math.min(9, qtd + 1); document.querySelector("#qtdValor").textContent = qtd;
+  });
+  document.querySelector("#menos").addEventListener("click", function () {
+    qtd = Math.max(1, qtd - 1); document.querySelector("#qtdValor").textContent = qtd;
+  });
+  document.querySelector("#addSacola").addEventListener("click", function () {
+    LB.adicionar(p.id, corEscolhida, seloTam, qtd);
+  });
+  function pintarBotaoFavorito() {
+    var bt = document.querySelector("#addFavorito");
+    if (!bt) return;
+    var on = LB.ehFavorito(p.id);
+    bt.textContent = on ? "Salvo nos favoritos ✓" : "Salvar nos favoritos";
+    bt.classList.toggle("bt--rosa", false);
+    bt.classList.toggle("bt--vazio", !on);
+  }
+  document.querySelector("#addFavorito").addEventListener("click", function () {
+    LB.alternarFavorito(p.id);
+    pintarBotaoFavorito();
+  });
+  pintarBotaoFavorito();
+
+  /* ------------------------------------------------------- relacionados */
+  var irmaos = PRODUTOS.filter(function (x) { return x.cat === p.cat && x.id !== p.id; });
+  if (irmaos.length < 4) {
+    var extras = PRODUTOS.filter(function (x) { return x.cat !== p.cat && x.id !== p.id; });
+    irmaos = irmaos.concat(extras).slice(0, 4);
+  }
+  LB.desenharCartoes("#gradeRelacionados", irmaos.slice(0, 4));
+})();
+</script>
+</body>
+</html>

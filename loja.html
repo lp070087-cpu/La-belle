@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loja — La Belle Modas</title>
+<meta name="description" content="Vestidos, conjuntos, blusas, calças, saias e shorts da La Belle Modas. Enviamos para todo o Brasil.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page" id="migalhaAtual">Loja</span>
+    </nav>
+
+    <header class="titulo-pagina">
+      <span class="em em--rosa rev">Todas as peças</span>
+      <h1 class="rev" style="--atraso:60ms" id="tituloLoja">Loja</h1>
+      <p class="texto-medio rev" style="--atraso:120ms" id="textoLoja">
+        Vestidos, conjuntos, blusas, calças, saias e shorts escolhidos pela La Belle.
+        Enviamos para todo o Brasil.
+      </p>
+    </header>
+
+    <div class="loja" style="padding-bottom:clamp(3rem,7vw,6rem)">
+      <!-- filtros -->
+      <aside class="filtros" id="filtros" aria-label="Filtros">
+        <div class="filtros__topo" style="display:none">
+          <span class="em">Filtrar</span>
+          <button class="icone-bt" type="button" id="fechaFiltros" aria-label="Fechar filtros">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+
+        <div class="filtros__bloco">
+          <h4>Categoria</h4>
+          <div class="filtros__lista" id="filtroCategoria"></div>
+        </div>
+
+        <div class="filtros__bloco">
+          <h4>Tamanho</h4>
+          <div class="tamanhos" id="filtroTamanho"></div>
+        </div>
+
+        <div class="filtros__bloco">
+          <h4>Cor</h4>
+          <div class="cores" id="filtroCor"></div>
+        </div>
+
+        <div class="filtros__bloco" style="border-bottom:0">
+          <h4>Preço</h4>
+          <p class="texto-peq" style="margin-bottom:.9rem">
+            Os materiais da loja não trazem tabela de preços. Fale com a La Belle pelo WhatsApp
+            para saber o valor das peças.
+          </p>
+          <a class="bt bt--vazio bt--pequeno bt--largo" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Consultar valores</a>
+        </div>
+
+        <button class="bt bt--vazio bt--pequeno bt--largo" type="button" id="limparFiltros">Limpar filtros</button>
+      </aside>
+
+      <!-- vitrine -->
+      <div>
+        <div class="loja__topo">
+          <p class="loja__conta"><b id="contaResultados">0</b> peças encontradas</p>
+          <div style="display:flex;gap:.6rem;align-items:center">
+            <button class="bt bt--vazio bt--pequeno filtros__bt" type="button" id="abreFiltros">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" width="15" height="15"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+              Filtrar
+            </button>
+            <div class="loja__ordem">
+              <label for="ordem">Ordenar</label>
+              <select class="entrada" id="ordem">
+                <option value="destaque">Destaques</option>
+                <option value="nome">Nome (A–Z)</option>
+                <option value="categoria">Categoria</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grade-produtos" id="gradeLoja"></div>
+
+        <div class="loja__vazio oculto" id="lojaVazio">
+          <b>Nenhuma peça com esses filtros</b>
+          <p class="texto-peq" style="margin-bottom:1.4rem">Tente outra combinação ou fale com a loja para encomendar.</p>
+          <button class="bt bt--rosa bt--pequeno" type="button" id="limparVazio">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  LB.iniciar({ pagina: "loja" });
+
+  var ROTULOS = {
+    todos: "Todas as peças",
+    lancamentos: "Lançamentos",
+    vestidos: "Vestidos",
+    conjuntos: "Conjuntos",
+    blusas: "Blusas e tops",
+    calcas: "Calças",
+    saias: "Saias e shorts",
+    promocoes: "Promoções"
+  };
+  var ORDEM_CAT = ["lancamentos", "vestidos", "conjuntos", "blusas", "calcas", "saias", "promocoes"];
+
+  var filtro = { cat: "todos", tam: null, cor: null, ordem: "destaque" };
+
+  // lê a categoria da URL
+  var qs = new URLSearchParams(location.search);
+  var catInicial = qs.get("cat");
+  if (catInicial && ROTULOS[catInicial]) filtro.cat = catInicial;
+
+  var TODAS_AS_CORES = (function () {
+    var mapa = {};
+    PRODUTOS.forEach(function (p) { p.cores.forEach(function (c) { mapa[c] = true; }); });
+    return Object.keys(mapa);
+  })();
+
+  /* ---------------------------------------------------- desenhar filtros */
+  function desenharFiltroCategoria() {
+    var alvo = document.querySelector("#filtroCategoria");
+    var contagem = { todos: PRODUTOS.length };
+    PRODUTOS.forEach(function (p) {
+      p.cats.forEach(function (c) { contagem[c] = (contagem[c] || 0) + 1; });
+    });
+    var cats = ["todos"].concat(ORDEM_CAT);
+    alvo.innerHTML = cats.map(function (c) {
+      var n = contagem[c] || 0;
+      if (!n) return "";
+      return '<button type="button" data-cat="' + c + '"' + (filtro.cat === c ? ' class="on"' : '') + '>' +
+        '<span>' + ROTULOS[c] + '</span><small>' + n + '</small></button>';
+    }).join("");
+  }
+
+  function desenharFiltroTamanho() {
+    var alvo = document.querySelector("#filtroTamanho");
+    alvo.innerHTML = TAMANHOS.map(function (t) {
+      return '<button type="button" data-tam-filtro="' + t + '"' + (filtro.tam === t ? ' class="on"' : '') + '>' + t + '</button>';
+    }).join("");
+  }
+
+  function desenharFiltroCor() {
+    var alvo = document.querySelector("#filtroCor");
+    alvo.innerHTML = TODAS_AS_CORES.map(function (c) {
+      return '<button type="button" data-cor-filtro="' + c + '" style="background:' + c + '" title="' +
+        c + '" aria-label="Filtrar pela cor ' + c + '"' + (filtro.cor === c ? ' class="on"' : '') + '></button>';
+    }).join("");
+  }
+
+  /* --------------------------------------------------------- aplicar */
+  function aplicar() {
+    var lista = porCategoria(filtro.cat);
+
+    if (filtro.tam) {
+      lista = lista.filter(function (p) {
+        return (INDISPONIVEIS[p.id] || []).indexOf(filtro.tam) === -1;
+      });
+    }
+    if (filtro.cor) {
+      lista = lista.filter(function (p) { return p.cores.indexOf(filtro.cor) > -1; });
+    }
+
+    if (filtro.ordem === "nome") {
+      lista = lista.slice().sort(function (a, b) { return a.nome.localeCompare(b.nome, "pt-BR"); });
+    } else if (filtro.ordem === "categoria") {
+      lista = lista.slice().sort(function (a, b) { return a.cat.localeCompare(b.cat, "pt-BR"); });
+    }
+
+    var grade = document.querySelector("#gradeLoja");
+    var vazio = document.querySelector("#lojaVazio");
+    var conta = document.querySelector("#contaResultados");
+
+    conta.textContent = lista.length;
+    if (!lista.length) {
+      grade.innerHTML = "";
+      vazio.classList.remove("oculto");
+    } else {
+      vazio.classList.add("oculto");
+      LB.desenharCartoes(grade, lista);
+    }
+
+    // titulo e migalha
+    var rotulo = ROTULOS[filtro.cat] || "Loja";
+    document.querySelector("#tituloLoja").textContent = rotulo;
+    document.querySelector("#migalhaAtual").textContent = rotulo;
+    document.title = rotulo + " — La Belle Modas";
+    var texto = document.querySelector("#textoLoja");
+    if (filtro.cat === "promocoes") {
+      texto.textContent = "Peças selecionadas com condição especial. Fale com a loja para saber o valor.";
+    } else if (filtro.cat === "lancamentos") {
+      texto.textContent = "As peças que acabaram de chegar na arara da La Belle.";
+    } else {
+      texto.textContent = "Vestidos, conjuntos, blusas, calças, saias e shorts escolhidos pela La Belle. Enviamos para todo o Brasil.";
+    }
+
+    desenharFiltroCategoria();
+    desenharFiltroTamanho();
+    desenharFiltroCor();
+  }
+
+  /* ---------------------------------------------------------- eventos */
+  document.addEventListener("click", function (e) {
+    var c = e.target.closest("[data-cat]");
+    if (c) {
+      filtro.cat = c.getAttribute("data-cat");
+      var url = filtro.cat === "todos" ? "loja.html" : "loja.html?cat=" + filtro.cat;
+      history.replaceState(null, "", url);
+      aplicar();
+      return;
+    }
+    var t = e.target.closest("[data-tam-filtro]");
+    if (t) {
+      var v = t.getAttribute("data-tam-filtro");
+      filtro.tam = (filtro.tam === v) ? null : v;
+      aplicar();
+      return;
+    }
+    var co = e.target.closest("[data-cor-filtro]");
+    if (co) {
+      var cv = co.getAttribute("data-cor-filtro");
+      filtro.cor = (filtro.cor === cv) ? null : cv;
+      aplicar();
+      return;
+    }
+    if (e.target.closest("#limparFiltros") || e.target.closest("#limparVazio")) {
+      filtro.cat = "todos"; filtro.tam = null; filtro.cor = null;
+      history.replaceState(null, "", "loja.html");
+      aplicar();
+      return;
+    }
+    if (e.target.closest("#abreFiltros")) {
+      document.querySelector("#filtros").classList.add("aberto");
+      var f = document.createElement("div");
+      f.className = "fundo aberto"; f.id = "fundoFiltros";
+      document.body.appendChild(f);
+      document.body.classList.add("travado");
+      return;
+    }
+    if (e.target.closest("#fechaFiltros") || e.target.closest("#fundoFiltros")) {
+      document.querySelector("#filtros").classList.remove("aberto");
+      var ff = document.querySelector("#fundoFiltros");
+      if (ff) ff.remove();
+      document.body.classList.remove("travado");
+    }
+  });
+
+  document.querySelector("#ordem").addEventListener("change", function (e) {
+    filtro.ordem = e.target.value;
+    aplicar();
+  });
+
+  // o painel de filtros no mobile fica visivel so quando aberto
+  function ajustaFiltrosMobile() {
+    var botaoTopo = document.querySelector("#filtros .filtros__topo");
+    botaoTopo.style.display = window.innerWidth <= 980 ? "flex" : "none";
+    if (window.innerWidth > 980) document.querySelector("#filtros").classList.remove("aberto");
+  }
+  window.addEventListener("resize", ajustaFiltrosMobile);
+  ajustaFiltrosMobile();
+
+  aplicar();
+})();
+</script>
+</body>
+</html>

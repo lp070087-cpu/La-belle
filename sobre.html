@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sobre a loja — La Belle Modas</title>
+<meta name="description" content="Quem é a La Belle Modas, onde fica a loja, como falar com a gente e os brindes a cada compra.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+<style>
+  .sobre-abre { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(1.6rem, 5vw, 4rem); align-items: center; }
+  .sobre-abre__foto { border-radius: 4px; overflow: hidden; }
+  .sobre-abre__foto .midia { aspect-ratio: 4/5; }
+  .sobre-abre__txt h1 { font-size: clamp(1.9rem, 4vw, 3rem); margin-bottom: 1.1rem; }
+  .sobre-abre__txt p { color: var(--grafite); line-height: 1.85; }
+  .sobre-abre__txt p + p { margin-top: .95rem; }
+  .numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.2rem; margin-top: 2.2rem; padding-top: 2rem; border-top: 1px solid var(--linha); }
+  .numeros div b { display: block; font-family: var(--serif); font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 400; line-height: 1; }
+  .numeros div span { display: block; margin-top: .4rem; font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cinza); }
+  @media (max-width: 900px) { .sobre-abre { grid-template-columns: 1fr; } }
+
+  .contato-grade { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  @media (max-width: 900px) { .contato-grade { grid-template-columns: 1fr; } }
+  .contato-lista { display: grid; gap: 1.2rem; }
+  .contato-lista li { display: grid; grid-template-columns: 40px 1fr; gap: 1rem; align-items: start; }
+  .contato-lista svg { width: 18px; height: 18px; margin-top: 3px; color: var(--rosa-forte); }
+  .contato-lista b { display: block; font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cinza); font-weight: 500; margin-bottom: .3rem; }
+  .contato-lista a, .contato-lista span { font-size: .95rem; color: var(--tinta); }
+  .contato-lista a:hover { color: var(--rosa-forte); }
+
+  /* 1 foto alta + 2 cartoes empilhados; no celular vira coluna unica */
+  .brindes { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(1rem, 2.5vw, 1.8rem); align-items: start; }
+  .brindes > figure { grid-row: span 2; }
+  @media (max-width: 760px) {
+    .brindes { grid-template-columns: 1fr; }
+    .brindes > figure { grid-row: auto; }
+  }
+</style>
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+
+  <!-- ============================== ABERTURA ============================== -->
+  <section class="envelope" style="padding-block:clamp(1.6rem,4vw,3rem) clamp(3rem,7vw,5rem)">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Sobre a loja</span>
+    </nav>
+
+    <div class="sobre-abre">
+      <figure class="sobre-abre__foto rev">
+        <div class="midia"><img src="assets/img/wide/ed-campanha.webp" alt="Campanha La Belle Modas" width="1400" height="1750"></div>
+      </figure>
+      <div class="sobre-abre__txt">
+        <span class="em em--rosa rev">Sobre a loja</span>
+        <h1 class="rev" style="--atraso:60ms">La <i>Belle</i> Modas</h1>
+        <p class="rev" style="--atraso:120ms">
+          A La Belle é uma loja de moda feminina que assina o próprio perfil como
+          <strong>“<span id="bioLoja"></span>”</strong>. É uma marca de vestuário que
+          veste o dia a dia e a ocasião especial, com peças escolhidas uma a uma e
+          atendimento próximo pelo WhatsApp e pelo Instagram.
+        </p>
+        <p class="rev" style="--atraso:180ms">
+          Novidades chegam toda semana na arara, e a loja mantém uma comunidade fiel:
+          são <strong id="numSeguidores"></strong> seguidores acompanhando o que entra
+          e o que sai, com <strong id="numPublicacoes"></strong> publicações no perfil.
+        </p>
+
+        <div class="numeros rev" style="--atraso:240ms">
+          <div><b id="n1">—</b><span>Seguidores no Instagram</span></div>
+          <div><b id="n2">—</b><span>Publicações</span></div>
+          <div><b>Brasil</b><span>Enviamos para todo o país</span></div>
+          <div><b>7 dias</b><span>Para troca em compras on-line</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ O QUE A LOJA OFERECE ============================ -->
+  <section class="secao secao--areia">
+    <div class="envelope">
+      <div class="cabeca">
+        <div>
+          <span class="em em--rosa rev">Como é comprar aqui</span>
+          <h2 class="t-2 rev" style="--atraso:60ms">Do jeito que a La Belle atende</h2>
+        </div>
+      </div>
+
+      <div class="beneficios" style="border-top:0;padding-top:0">
+        <div class="beneficio rev">
+          <span class="beneficio__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </span>
+          <h3>Enviamos para todo o Brasil</h3>
+          <p>O pedido sai da loja por transportadora e chega em qualquer estado, com o rastreio disponível na sua conta.</p>
+        </div>
+        <div class="beneficio rev" style="--atraso:70ms">
+          <span class="beneficio__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M18 2v5h-5M6 22v-5h5"/></svg>
+          </span>
+          <h3>Troca em 7 dias</h3>
+          <p>Nas compras on-line, você tem 7 dias corridos para trocar, com a peça em perfeito estado e a etiqueta original.</p>
+        </div>
+        <div class="beneficio rev" style="--atraso:140ms">
+          <span class="beneficio__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8S9.5 3 7 4.2 8 8 12 8s5-2.6 2.5-3.8S12 8 12 8z"/></svg>
+          </span>
+          <h3>Brindes a cada compra</h3>
+          <p>Toda compra acompanha um mimo escolhido pela loja — a La Belle mostra os brindes nos destaques do perfil.</p>
+        </div>
+        <div class="beneficio rev" style="--atraso:210ms">
+          <span class="beneficio__ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.5-.7L3 21l1.4-4.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          </span>
+          <h3>Atendimento direto</h3>
+          <p>Você fala com a loja pelo WhatsApp ou pelo Instagram e tira dúvida de tamanho, cor e valor na hora.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================ BRINDES ================================ -->
+  <section class="secao" id="brindes">
+    <div class="envelope">
+      <div class="cabeca">
+        <div>
+          <span class="em em--rosa rev">Presentes e brindes</span>
+          <h2 class="t-2 rev" style="--atraso:60ms">Todo pedido sai com um mimo</h2>
+        </div>
+        <p class="texto-peq rev" style="--atraso:120ms;max-width:38ch">
+          A La Belle separa um brinde para acompanhar as compras — alguns deles você
+          vê nos destaques do perfil.
+        </p>
+      </div>
+
+      <div class="brindes">
+        <figure class="rev" style="grid-row:span 2">
+          <div class="midia" style="aspect-ratio:1/1"><img src="assets/img/tall/brindes.webp" alt="Embalagem e brinde da La Belle Modas" loading="lazy" width="900" height="900"></div>
+          <figcaption style="margin-top:.9rem;font-size:.86rem;color:var(--cinza)">Embalagem e brinde enviados com o pedido</figcaption>
+        </figure>
+        <div class="rev" style="--atraso:80ms;padding:1.2rem;border:1px solid var(--linha);border-radius:4px">
+          <h3 style="font-size:1.05rem;margin-bottom:.5rem">Cortesia da loja</h3>
+          <p style="font-size:.88rem;color:var(--grafite);line-height:1.8">
+            O brinde não tem valor cobrado e não entra na troca — ele vem como cortesia.
+          </p>
+        </div>
+        <div class="rev" style="--atraso:160ms;padding:1.2rem;border:1px solid var(--linha);border-radius:4px">
+          <h3 style="font-size:1.05rem;margin-bottom:.5rem">É um presente?</h3>
+          <p style="font-size:.88rem;color:var(--grafite);line-height:1.8">
+            Avise pelo WhatsApp antes de finalizar: a La Belle orienta como preparar o envio.
+          </p>
+          <a class="bt bt--vazio bt--pequeno" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener" style="margin-top:1rem">Falar com a loja</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================= LOJA ================================= -->
+  <section class="secao secao--areia">
+    <div class="envelope">
+      <div class="contato-grade">
+        <div>
+          <span class="em em--rosa rev">Onde a gente está</span>
+          <h2 class="t-2 rev" style="--atraso:60ms;margin-bottom:1.2rem">A loja física</h2>
+
+          <div class="local" style="margin-bottom:1.6rem">
+            <div class="midia"><img src="assets/img/cat/cat-lancamentos.webp" alt="La Belle Modas" loading="lazy" width="760" height="1010"></div>
+            <div class="local__selo">
+              <span class="em em--claro">Atendimento presencial</span>
+              <b id="localEndereco">—</b>
+              <span id="localCidade">—</span>
+              <a class="bt bt--rosa bt--pequeno" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener" style="margin-top:1rem">Falar com a loja</a>
+            </div>
+          </div>
+
+          <p class="texto-peq">
+            Na loja física valem as regras de troca presencial: <strong>3 dias corridos</strong>,
+            sempre com a nota fiscal ou o comprovante de compra e a etiqueta original.
+            Compras feitas on-line têm <strong>7 dias corridos</strong>.
+          </p>
+        </div>
+
+        <div id="contato">
+          <span class="em em--rosa rev">Falar com a gente</span>
+          <h2 class="t-2 rev" style="--atraso:60ms;margin-bottom:1.6rem">Contato</h2>
+
+          <ul class="contato-lista rev" style="--atraso:120ms">
+            <li>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2zm0 1.8a8.2 8.2 0 0 1 0 16.4 8.1 8.1 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8z"/></svg>
+              <div><b>WhatsApp</b><a href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Atendimento da loja</a></div>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+              <div><b>Instagram</b><a href="https://www.instagram.com/labellemodas02/" target="_blank" rel="noopener">@labellemodas02</a></div>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.8"/></svg>
+              <div><b>Endereço</b><span id="contatoEndereco">—</span></div>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <div><b>Representante</b><span id="contatoRep">—</span></div>
+            </li>
+          </ul>
+
+          <form class="form-contato rev" style="--atraso:180ms;margin-top:2rem" id="formContato" novalidate>
+            <span class="em">Deixe sua mensagem</span>
+            <p class="texto-peq" style="margin:.7rem 0 1.2rem">
+              O formulário abaixo é uma demonstração da interface: nesta fase ele não envia nada.
+              Para falar de verdade com a loja, use o WhatsApp.
+            </p>
+            <label class="campo"><span class="rotulo">Seu nome</span><input class="entrada" name="nome" required></label>
+            <label class="campo"><span class="rotulo">Seu e-mail</span><input class="entrada" type="email" name="email" required></label>
+            <label class="campo"><span class="rotulo">Mensagem</span><textarea class="entrada" name="msg" rows="4"></textarea></label>
+            <button class="bt bt--rosa bt--largo" type="submit">Enviar mensagem</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== INSTAGRAM ============================== -->
+  <section class="secao">
+    <div class="envelope">
+      <div class="cabeca cabeca--centro">
+        <div style="text-align:center">
+          <span class="em em--rosa rev">Acompanhe o dia a dia</span>
+          <h2 class="t-2 rev" style="--atraso:60ms">@labellemodas02</h2>
+          <p class="texto-medio rev" style="--atraso:120ms">Novidades, provas de look e bastidores da loja.</p>
+        </div>
+      </div>
+      <div class="ig-grade" id="igGrade"></div>
+      <div style="text-align:center;margin-top:2.4rem">
+        <a class="bt bt--rosa" href="https://www.instagram.com/labellemodas02/" target="_blank" rel="noopener">Seguir no Instagram</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  LB.iniciar({ pagina: "sobre" });
+
+  /* ------------------------------------------------- dados reais da loja */
+  document.querySelector("#bioLoja").textContent = LOJA.bio;
+  var seg = document.querySelector("#numSeguidores");
+  var pub = document.querySelector("#numPublicacoes");
+  if (seg) seg.textContent = LOJA.seguidores;
+  if (pub) pub.textContent = LOJA.publicacoes;
+  document.querySelector("#n1").textContent = LOJA.seguidores;
+  document.querySelector("#n2").textContent = LOJA.publicacoes;
+
+  var enderecoCompleto = LOJA.endereco + " — " + LOJA.cidade;
+  document.querySelector("#localEndereco").textContent = LOJA.endereco;
+  document.querySelector("#localCidade").textContent = LOJA.cidade;
+  document.querySelector("#contatoEndereco").textContent = enderecoCompleto;
+  document.querySelector("#contatoRep").textContent = LOJA.representante;
+
+  /* ------------------------------------------------- grade do instagram
+     Cada item aponta para o link real do reel correspondente (ou para o
+     perfil, nos dois primeiros). A imagem vem do proprio reel: nenhuma
+     foto da Vivence e usada aqui. */
+  var grade = document.querySelector("#igGrade");
+  if (grade) {
+    var itens = REELS.slice(0, 6);
+    grade.innerHTML = itens.map(function (r, i) {
+      return '<a class="ig-item rev" style="--atraso:' + (i * 60) + 'ms" href="' + r.url + '" target="_blank" rel="noopener" aria-label="Abrir publicação da La Belle no Instagram">' +
+        '<span class="midia"><img src="' + LB.img(r.img.split("/")[0], r.img.split("/")[1]) + '" alt="Publicação da La Belle Modas" loading="lazy" width="480" height="854"></span>' +
+        '<span class="ig-item__ico">' + LB.ICO.instagram + '</span>' +
+      '</a>';
+    }).join("");
+  }
+
+  /* -------------------------------------------------------- formulario */
+  var form = document.querySelector("#formContato");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nome = form.querySelector("[name=nome]").value.trim();
+      var mail = form.querySelector("[name=email]").value.trim();
+      if (nome.length < 2) { LB.toast("Digite o seu nome, por favor"); return; }
+      if (mail.indexOf("@") < 1) { LB.toast("Confira o seu e-mail, por favor"); return; }
+      LB.toast("Mensagem registrada (demonstração)");
+      form.reset();
+    });
+  }
+})();
+</script>
+</body>
+</html>

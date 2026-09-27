@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trocas e devoluções — La Belle Modas</title>
+<meta name="description" content="Como funciona a troca na La Belle Modas: prazos, condições e quais peças não são trocadas.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Trocas e devoluções</span>
+    </nav>
+
+    <header class="titulo-pagina">
+      <span class="em em--rosa rev">Vamos tirar as dúvidas?</span>
+      <h1 class="rev" style="--atraso:60ms">Trocas e devoluções</h1>
+      <p class="texto-medio rev" style="--atraso:120ms">
+        Abaixo está exatamente o que a La Belle informa sobre trocas: as condições,
+        os prazos e as peças que não entram na troca.
+      </p>
+    </header>
+
+    <div class="politica" style="padding-bottom:clamp(3rem,7vw,6rem)">
+      <aside class="politica__indice" aria-label="Nesta página">
+        <h4>Nesta página</h4>
+        <nav>
+          <a href="#posso-trocar">1. Posso trocar?</a>
+          <a href="#prazo">2. Prazo de troca</a>
+          <a href="#nao-trocamos">Quais peças não trocamos?</a>
+          <a href="#como-fazer">Como pedir a troca</a>
+          <a href="#duvidas">Ainda com dúvida?</a>
+        </nav>
+      </aside>
+
+      <div class="politica__corpo" id="politicaCorpo"></div>
+    </div>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+(function () {
+  LB.iniciar({ pagina: "trocas" });
+
+  var corpo = document.querySelector("#politicaCorpo");
+
+  /* As seções 1, 2 e "quais peças não trocamos" vêm do array TROCAS,
+     que reproduz o texto enviado pela loja. Nada foi reescrito nem
+     reinterpretado: nem prazo, nem condição. */
+  var html = TROCAS.map(function (s) {
+
+    if (s.id === "posso-trocar") {
+      return '<section id="' + s.id + '">' +
+        '<h2>' + s.titulo + '</h2>' +
+        s.paragrafos.map(function (p) { return '<p>' + p + '</p>'; }).join("") +
+        '<div class="destaque-caixa"><p>Guarde a <strong>nota fiscal ou o comprovante de compra</strong> — ele é pedido em toda troca, seja na loja ou por envio.</p></div>' +
+      '</section>';
+    }
+
+    if (s.id === "prazo") {
+      return '<section id="' + s.id + '">' +
+        '<h2>' + s.titulo + '</h2>' +
+        '<div class="duas-colunas" style="margin-top:0">' +
+          s.blocos.map(function (b) {
+            return '<div><h3>' + b.titulo + '</h3><p>' + b.texto + '</p></div>';
+          }).join("") +
+        '</div>' +
+        '<p style="margin-top:1.4rem">A contagem começa na data de recebimento da peça. Para a troca acontecer, o produto precisa estar em perfeito estado e com a etiqueta original.</p>' +
+      '</section>';
+    }
+
+    return '<section id="' + s.id + '">' +
+      '<h2>' + s.titulo + '</h2>' +
+      (s.paragrafos || []).map(function (p) { return '<p>' + p + '</p>'; }).join("") +
+      (s.lista ? '<ul>' + s.lista.map(function (i) { return '<li>' + i + '</li>'; }).join("") + '</ul>' : '') +
+      '<div class="destaque-caixa"><p>Essas peças <strong>não podem ser trocadas</strong> em nenhuma situação, por isso escolha com atenção o tamanho e a cor antes de finalizar.</p></div>' +
+    '</section>';
+  }).join("");
+
+  /* seções que complementam a política, sem alterar as regras acima */
+  html += '' +
+  '<section id="como-fazer">' +
+    '<h2>Como pedir a troca</h2>' +
+    '<p>Fale com a La Belle pelo WhatsApp informando o nome completo, o número do pedido ou a data da compra, e qual peça você quer trocar. A loja confirma se a troca está dentro do prazo e combina o envio da peça de volta.</p>' +
+    '<p>Se a compra foi feita pelo site, o pedido aparece em <a class="lk" href="conta.html#pedidos">Minha conta → Meus pedidos</a>, com a data exata da compra — é essa data que define o prazo.</p>' +
+    '<div style="margin-top:1.6rem;display:flex;gap:.6rem;flex-wrap:wrap">' +
+      '<a class="bt bt--rosa bt--pequeno" href="https://wa.me/message/KC6Z4GSRHU6TF1" target="_blank" rel="noopener">Falar com a loja no WhatsApp</a>' +
+      '<a class="bt bt--vazio bt--pequeno" href="conta.html#pedidos">Ver meus pedidos</a>' +
+    '</div>' +
+  '</section>' +
+
+  '<section id="duvidas">' +
+    '<h2>Ainda com dúvida?</h2>' +
+    '<p>Se ficou qualquer dúvida sobre a troca da sua peça, o caminho mais rápido é falar direto com a loja. O atendimento acontece pelo WhatsApp e pelo Instagram da La Belle.</p>' +
+    '<ul>' +
+      '<li>WhatsApp: <a class="lk" href="' + LOJA.whatsapp + '" target="_blank" rel="noopener">atendimento da loja</a></li>' +
+      '<li>Instagram: <a class="lk" href="' + LOJA.instagramUrl + '" target="_blank" rel="noopener">@' + LOJA.instagram + '</a></li>' +
+      '<li>Loja: ' + LOJA.endereco + ' — ' + LOJA.cidade + '</li>' +
+    '</ul>' +
+    '<div class="destaque-caixa"><p>Esta página reproduz a política informada pela própria Loja. Os prazos e as condições <strong>não foram alterados</strong> nesta apresentação.</p></div>' +
+  '</section>';
+
+  corpo.innerHTML = html;
+
+  /* índice ativo conforme a rolagem */
+  var links = Array.prototype.slice.call(document.querySelectorAll(".politica__indice a"));
+  var secoes = Array.prototype.slice.call(document.querySelectorAll(".politica__corpo > section"));
+  if ("IntersectionObserver" in window) {
+    var obs = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (l) {
+          l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id);
+          l.style.color = l.getAttribute("href") === "#" + e.target.id ? "var(--rosa-forte)" : "";
+        });
+      });
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    secoes.forEach(function (s) { obs.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
