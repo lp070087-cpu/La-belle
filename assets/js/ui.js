@@ -72,7 +72,7 @@ const LB = (function () {
       { txt: "Sobre a La Belle", href: "sobre.html" },
       { txt: "Instagram", href: "https://www.instagram.com/labellemodas02/", fora: true },
       { txt: "Trocas e devoluções", href: "trocas.html" },
-      { txt: "Minha conta", href: "conta.html" }
+      { txt: "Minha conta", href: "login.html" }
     ]}
   ];
 
@@ -216,7 +216,7 @@ const LB = (function () {
         '<div class="faixa__dir">' +
           '<a href="https://www.instagram.com/labellemodas02/" target="_blank" rel="noopener">@labellemodas02</a>' +
           '<a href="trocas.html">Trocas e devoluções</a>' +
-          '<a href="conta.html">Minha conta</a>' +
+          '<a href="login.html">Minha conta</a>' +
         '</div>' +
       '</div>' +
     '</div>' +
@@ -231,7 +231,7 @@ const LB = (function () {
         '</a>' +
         '<div class="acoes">' +
           '<button class="icone-bt" id="btBusca" aria-label="Buscar produtos">' + ICO.busca + '</button>' +
-          '<a class="icone-bt so-grande" href="conta.html" aria-label="Minha conta">' + ICO.conta + '</a>' +
+          '<a class="icone-bt so-grande" href="login.html" aria-label="Minha conta">' + ICO.conta + '</a>' +
           '<a class="icone-bt so-grande" href="conta.html#favoritos" aria-label="Favoritos">' + ICO.coracao +
             '<span class="icone-bt__cont icone-bt__cont--favoritos oculto">0</span></a>' +
           '<a class="icone-bt" id="btSacola" href="sacola.html" aria-label="Abrir sacola">' + ICO.sacola +
@@ -316,7 +316,7 @@ const LB = (function () {
             '<li><a href="sobre.html">Sobre a loja ' + ICO.seta + '</a></li>' +
           '</ul>' +
           '<div class="gmenu__pe">' +
-            '<a class="bt bt--rosa bt--largo" href="conta.html">Minha conta</a>' +
+            '<a class="bt bt--rosa bt--largo" href="login.html">Minha conta</a>' +
             '<a class="bt bt--linha-clara bt--largo" href="conta.html#favoritos">Favoritos</a>' +
           '</div>' +
           '<div class="gmenu__info">' +
@@ -537,7 +537,7 @@ const LB = (function () {
             '<li><a href="trocas.html#prazo">Prazos de troca</a></li>' +
             '<li><a href="sacola.html">Entrega e frete</a></li>' +
             '<li><a href="conta.html#pedidos">Meus pedidos</a></li>' +
-            '<li><a href="conta.html#rastreio">Rastrear pedido</a></li>' +
+            '<li><a href="conta.html#pedidos">Rastrear pedido</a></li>' +
             '<li><a href="sobre.html#contato">Falar com a loja</a></li>' +
           '</ul></div>' +
           '<div><h4>A loja</h4><ul class="rodape__contato">' +

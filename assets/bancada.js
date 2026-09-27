@@ -38,6 +38,17 @@ function listarHtml() {
 function existe(p) {
   return fs.existsSync(path.join(RAIZ, p));
 }
+/* Folhas de estilo que as PAGINAS realmente carregam.
+   Antes esta lista era fixa em base/site/paginas: a folha nova (conta.css) ficou
+   INVISIVEL para as provas de classe, e a bancada reprovava o site correto. A
+   lista fixa volta a cegar a cada folha nova, entao aqui se descobre, nao se lista. */
+function listarCss() {
+  const set = new Set();
+  listarHtml().forEach((arq) => {
+    for (const m of ler(arq).matchAll(/href="(assets\/css\/[A-Za-z0-9._\-]+\.css)"/g)) set.add(m[1]);
+  });
+  return [...set].sort();
+}
 
 /* ========================================================== A. DADOS ====== */
 secao("A. dados.js contra o disco");
@@ -142,10 +153,7 @@ ok(naoTroca && naoTroca.lista.length === esperadas.length,
   const refs = new Set();
 
   // 1) caminho literal escrito em qualquer arquivo do projeto
-  const arquivos = listarHtml().concat([
-    "assets/js/ui.js", "assets/js/dados.js",
-    "assets/css/base.css", "assets/css/site.css", "assets/css/paginas.css"
-  ]);
+  const arquivos = listarHtml().concat(["assets/js/ui.js", "assets/js/dados.js"], listarCss());
   arquivos.forEach((f) => {
     if (!existe(f)) return;
     // o parentese e obrigatorio: sem grupo, m[1] e undefined e a prova nao le nada
@@ -262,7 +270,7 @@ function cssDe(fonte) {
 const RE_QUALQUER_CLASSE = /\.(-?[A-Za-z_][A-Za-z0-9_\-]*)/g;
 function classesCitadas() {
   const set = new Set();
-  ["assets/css/base.css", "assets/css/site.css", "assets/css/paginas.css"].forEach((f) => {
+  listarCss().forEach((f) => {
     for (const m of cssDe(ler(f)).matchAll(RE_QUALQUER_CLASSE)) set.add(m[1]);
   });
   listarHtml().forEach((arq) => {
@@ -275,7 +283,7 @@ function classesCitadas() {
 
 function classesDefinidas() {
   const set = new Set();
-  ["assets/css/base.css", "assets/css/site.css", "assets/css/paginas.css"].forEach((f) => {
+  listarCss().forEach((f) => {
     const css = cssDe(ler(f));
     for (const m of css.matchAll(RE_CLASSE_DEF)) set.add(m[1]);
   });
@@ -323,6 +331,14 @@ const semDefinicao = [...usadas].filter((c) => !citadasCss.has(c)).sort();
 ok(semDefinicao.length === 0,
   "toda classe usada aparece em algum lugar do CSS",
   semDefinicao.length ? "sem definicao: " + semDefinicao.join(", ") : "");
+
+/* A prova acima so vale se a varredura ALCANCAR a folha nova. Sem isto, tirar o
+   conta.css da lista deixaria a bancada verde e cega. */
+ok(listarCss().indexOf("assets/css/conta.css") > -1,
+  "a varredura alcanca a folha nova (conta.css), e nao so as tres antigas",
+  "varridas: " + listarCss().join(", "));
+ok(listarCss().indexOf("assets/css/site.backup.css") === -1,
+  "a varredura NAO varre a copia de seguranca (site.backup.css) que nenhuma pagina carrega");
 
 /* ============================================== D. CONTROLE NEGATIVO ===== */
 secao("D. controle negativo (o instrumento precisa saber reprovar)");

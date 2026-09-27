@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Criar conta — La Belle Modas</title>
+<meta name="description" content="Crie a sua conta La Belle Modas para acompanhar pedidos, salvar endereços e falar direto com a loja.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="apple-touch-icon" href="assets/img/logo/labelle-avatar.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+<link rel="stylesheet" href="assets/css/conta.css">
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Criar conta</span>
+    </nav>
+
+    <div class="entrar entrar--pagina pagina-acesso">
+      <figure class="entrar__foto">
+        <img src="assets/img/hero/hero-c.webp" alt="Modelo vestindo uma peça da La Belle Modas" width="1200" height="1500">
+        <figcaption>
+          <b>Uma conta La Belle</b>
+          <p>Seus pedidos, seus endereços e suas medidas de sempre, guardados num só lugar.</p>
+        </figcaption>
+      </figure>
+
+      <div class="entrar__lado">
+        <div class="entrar__caixa">
+
+          <div class="cx-marca">
+            <img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">
+            <b>La <i>Belle</i></b>
+          </div>
+
+          <div class="entrar__abas">
+            <a href="login.html">Entrar</a>
+            <a class="on" href="cadastro.html" aria-current="page">Criar conta</a>
+          </div>
+
+          <h1 class="cx-titulo">Criar a sua conta</h1>
+          <p class="cx-sub">Leva menos de um minuto. Depois é só entrar para acompanhar os seus pedidos.</p>
+
+          <div class="cx-aviso">
+            <span data-ico="info" aria-hidden="true"></span>
+            <p><b>Demonstração visual.</b> Os campos e as validações estão prontos, mas o projeto ainda
+            não tem banco de dados. Nada do que você digitar é enviado ou guardado — inclusive a senha,
+            que não é salva em lugar nenhum.</p>
+          </div>
+
+          <form id="formCadastro" novalidate>
+            <label class="campo">
+              <span class="rotulo">Nome completo</span>
+              <input class="entrada" type="text" name="nome" autocomplete="name"
+                     placeholder="Como no seu documento" required>
+            </label>
+
+            <label class="campo">
+              <span class="rotulo">E-mail</span>
+              <input class="entrada" type="email" name="email" autocomplete="email"
+                     placeholder="voce@email.com" required>
+            </label>
+
+            <label class="campo">
+              <span class="rotulo">WhatsApp</span>
+              <input class="entrada" type="tel" name="whatsapp" inputmode="tel" autocomplete="tel"
+                     placeholder="(00) 00000-0000" required>
+            </label>
+
+            <label class="campo">
+              <span class="rotulo">Senha</span>
+              <input class="entrada" type="password" name="senha" autocomplete="new-password"
+                     placeholder="Pelo menos 8 caracteres" required>
+            </label>
+
+            <div class="forca" id="forca" data-nivel="0" aria-live="polite">
+              <div class="forca__barras" aria-hidden="true">
+                <span class="forca__barra"></span><span class="forca__barra"></span>
+                <span class="forca__barra"></span><span class="forca__barra"></span>
+              </div>
+              <span class="forca__txt" id="forcaTxt">Força da senha</span>
+            </div>
+
+            <label class="campo">
+              <span class="rotulo">Confirmar senha</span>
+              <input class="entrada" type="password" name="senha2" autocomplete="new-password"
+                     placeholder="Repita a senha" required>
+            </label>
+
+            <label class="escolha" style="margin:.3rem 0 1.3rem">
+              <input type="checkbox" name="aceite" id="aceite" required>
+              <span>Li e concordo com os
+                <button class="lk" type="button" id="btTermos" aria-expanded="false" aria-controls="termos">termos de uso</button>
+                e a
+                <button class="lk" type="button" id="btPrivacidade" aria-expanded="false" aria-controls="termos">política de privacidade</button>.</span>
+            </label>
+
+            <div class="cx-recuperar oculto" id="termos">
+              <p id="termosTxt"></p>
+            </div>
+
+            <button class="bt bt--rosa bt--largo" type="submit">Criar minha conta</button>
+          </form>
+
+          <div class="cx-sistema oculto" id="sistema" role="status"></div>
+
+          <p class="cx-troca">Já tem uma conta? <a href="login.html">Entrar</a></p>
+
+          <div class="cx-selos">
+            <span><span data-ico="escudo" aria-hidden="true"></span> Seus dados ficam com você</span>
+            <span><span data-ico="presente" aria-hidden="true"></span> Brindes a cada compra</span>
+          </div>
+
+          <p class="cx-voltar-loja"><a class="lk-seta" href="index.html">Voltar para a loja</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/conta-ui.js"></script>
+<script src="assets/js/conta-mock.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  LB.iniciar({ pagina: "cadastro" });
+  CONTA_UI.pintarIcones();
+  CONTA_UI.prepararSenhas();
+
+  var form = document.querySelector("#formCadastro");
+  var botao = form.querySelector('button[type="submit"]');
+  var nome = form.querySelector("[name=nome]");
+  var email = form.querySelector("[name=email]");
+  var whats = form.querySelector("[name=whatsapp]");
+  var senha = form.querySelector("[name=senha]");
+  var senha2 = form.querySelector("[name=senha2]");
+  var aceite = form.querySelector("#aceite");
+  var sistema = document.querySelector("#sistema");
+  var forca = document.querySelector("#forca");
+  var forcaTxt = document.querySelector("#forcaTxt");
+  var termos = document.querySelector("#termos");
+  var termosTxt = document.querySelector("#termosTxt");
+
+  CONTA_UI.mascaraTelefone(whats);
+
+  var campos = [nome, email, whats, senha, senha2];
+  campos.forEach(function (c) {
+    c.addEventListener("input", function () { CONTA_UI.limparErro(c); });
+  });
+
+  /* medidor de forca: so informa, nunca bloqueia o que a pessoa escolheu */
+  senha.addEventListener("input", function () {
+    var r = CONTA_UI.forcaSenha(senha.value);
+    forca.setAttribute("data-nivel", String(senha.value ? r.nivel : 0));
+    forcaTxt.textContent = senha.value ? r.rotulo : "Força da senha";
+  });
+
+  /* termos e privacidade: os documentos de verdade ainda nao existem, e o
+     projeto nao inventa texto juridico. A caixa diz isso com clareza.     */
+  var TEXTOS = {
+    termos: "Os termos de uso desta loja serão publicados junto com a área do cliente, " +
+            "quando o cadastro passar a valer de verdade. Enquanto isso, as regras que já " +
+            "valem para as compras são as da página Trocas e devoluções, desta mesma loja.",
+    privacidade: "A política de privacidade será publicada junto com a área do cliente. " +
+                 "Enquanto não existe banco de dados, nada do que você digita nesta tela é " +
+                 "enviado ou guardado — nem o nome, nem o WhatsApp, nem a senha."
+  };
+  var ultimo = null;
+  function mostrarTermos(qual) {
+    var btn = document.querySelector(qual === "termos" ? "#btTermos" : "#btPrivacidade");
+    var outro = document.querySelector(qual === "termos" ? "#btPrivacidade" : "#btTermos");
+    var jaAberto = !termos.classList.contains("oculto") && ultimo === qual;
+    outro.setAttribute("aria-expanded", "false");
+    if (jaAberto) {
+      termos.classList.add("oculto");
+      btn.setAttribute("aria-expanded", "false");
+      return;
+    }
+    ultimo = qual;
+    termosTxt.textContent = TEXTOS[qual] + " Veja também a página ";
+    var a = document.createElement("a");
+    a.href = "trocas.html";
+    a.textContent = "Trocas e devoluções";
+    termosTxt.appendChild(a);
+    termosTxt.appendChild(document.createTextNode("."));
+    termos.classList.remove("oculto");
+    btn.setAttribute("aria-expanded", "true");
+  }
+  document.querySelector("#btTermos").addEventListener("click", function () { mostrarTermos("termos"); });
+  document.querySelector("#btPrivacidade").addEventListener("click", function () { mostrarTermos("privacidade"); });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    CONTA_UI.limparTudo(form);
+    sistema.classList.add("oculto");
+    aceite.closest(".escolha").classList.remove("cx-erro-aceite");
+
+    var vNome = nome.value.trim();
+    var vEmail = email.value.trim();
+    var dWhats = CONTA_UI.digitos(whats.value);
+    var vSenha = senha.value;
+    var vSenha2 = senha2.value;
+
+    if (vNome.length < 3) CONTA_UI.marcarErro(nome, "Digite o seu nome completo.");
+    else if (vNome.indexOf(" ") < 1) CONTA_UI.marcarErro(nome, "Inclua também o sobrenome.");
+
+    if (!vEmail) CONTA_UI.marcarErro(email, "Digite o seu e-mail.");
+    else if (!CONTA_UI.ehEmail(vEmail)) CONTA_UI.marcarErro(email, "Confira o seu e-mail, por favor.");
+
+    if (dWhats.length < 10) CONTA_UI.marcarErro(whats, "Digite o DDD e o número do WhatsApp.");
+
+    if (CONTA_UI.forcaSenha(vSenha).fraca) {
+      CONTA_UI.marcarErro(senha, "Use pelo menos 8 caracteres, misturando letras e números.");
+    }
+
+    if (!vSenha2) CONTA_UI.marcarErro(senha2, "Repita a senha para confirmar.");
+    else if (vSenha2 !== vSenha) CONTA_UI.marcarErro(senha2, "As duas senhas estão diferentes.");
+
+    if (!aceite.checked) {
+      aceite.closest(".escolha").classList.add("cx-erro-aceite");
+      if (!CONTA_UI.focarPrimeiroErro(form)) aceite.focus();
+      return;
+    }
+
+    if (CONTA_UI.focarPrimeiroErro(form)) return;
+
+    /* A senha sai de escopo aqui: nao e enviada, nao e guardada. */
+    vSenha = null;
+
+    botao.disabled = true;
+    CONTA_MOCK.API.criarConta({ nome: vNome, email: vEmail, whatsapp: whats.value })
+      ["catch"](function () {})
+      .then(function () {
+        sistema.innerHTML =
+          '<p><b>Cadastro ainda não enviado.</b> Os dados passaram por todas as validações, mas ' +
+          'este projeto está na fase de apresentação e não tem servidor nem banco de dados para ' +
+          'receber o seu cadastro. Nada foi guardado — e a senha nunca é armazenada em nenhum lugar.</p>' +
+          '<a class="bt bt--rosa bt--pequeno" href="' + LB.LOJA.whatsapp + '" target="_blank" rel="noopener">' +
+          'Falar com a loja no WhatsApp</a>';
+        sistema.classList.remove("oculto");
+        botao.disabled = false;
+        sistema.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+  });
+})();
+</script>
+</body>
+</html>

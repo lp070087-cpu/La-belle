@@ -306,19 +306,6 @@
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(100deg, rgba(246,242,240,.55) 0%, transparent 26%);
 }
-/* cartao flutuante dentro do hero */
-.hero__flutua {
-  position: absolute; z-index: 4; left: 0; bottom: clamp(1.6rem, 4vw, 3rem);
-  transform: translateX(-38%);
-  width: clamp(190px, 17vw, 240px);
-  background: #fff; border-radius: 4px; overflow: hidden;
-  box-shadow: var(--sombra-3);
-}
-.hero__flutua .midia { aspect-ratio: 4/3; }
-.hero__flutua figcaption { padding: .85rem .95rem 1rem; }
-.hero__flutua b { display: block; font-family: var(--serif); font-weight: 400; font-size: .98rem; margin-bottom: .2rem; }
-.hero__flutua span { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--rosa-forte); }
-
 /* etiqueta vertical da direita */
 .hero__vertical {
   position: absolute; right: 0; top: 50%; z-index: 4;
@@ -341,8 +328,6 @@
   .hero__texto { max-width: none; padding-inline: var(--goteira); padding-block: clamp(2.6rem, 9vw, 4rem); order: 2; }
   .hero__foto { order: 1; aspect-ratio: 4/5; max-height: 68svh; }
   .hero__foto > img { object-position: 50% 18%; }
-  .hero__flutua { left: auto; right: var(--goteira); bottom: -2.4rem; transform: none; width: clamp(150px, 34vw, 190px); }
-  .hero { padding-bottom: 3rem; }
   .hero__vertical { display: none; }
 }
 @media (max-width: 560px) {

@@ -1,0 +1,352 @@
+/* ==========================================================================
+   conta.css — area do cliente: login, cadastro e painel
+   --------------------------------------------------------------------------
+   REGRA DESTE ARQUIVO: nao redefine nada do site publico.
+   Tudo aqui e classe nova com prefixo .cx- (painel) ou .olho-bt (campo de
+   senha). Nenhum seletor toca .hero, .secao, .mosaico, .rodape, .cabecalho,
+   .entrar, .conta, .painel-conta ou qualquer classe existente.
+   A identidade visual vem dos tokens do :root (base.css) e dos componentes
+   ja existentes (.bt, .campo, .entrada, .escolha, .envelope, .migalha).
+   ========================================================================== */
+
+/* ==================================================== 1. CAMPO DE SENHA
+   O olho e posicionado dentro do .campo. O padding da direita abre espaco
+   para ele nao cobrir o texto digitado.                                     */
+.campo--senha { position: relative; }
+.campo--senha .entrada { padding-right: 3.1rem; }
+
+.olho-bt {
+  position: absolute;
+  right: .35rem;
+  bottom: .3rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cinza);
+  border-radius: 3px;
+  transition: color var(--t-rapido), background var(--t-rapido);
+}
+.olho-bt svg { width: 19px; height: 19px; }
+.olho-bt:hover { color: var(--rosa-forte); }
+.olho-bt:focus-visible { outline: none; color: var(--rosa-forte); box-shadow: 0 0 0 3px rgba(255, 101, 195, .18); }
+/* quando o campo tem erro, o olho sobe para nao encostar no aviso */
+.campo--senha.tem-erro .olho-bt { bottom: 1.45rem; }
+
+/* dica de forca da senha (cadastro e seguranca) */
+.forca { display: flex; align-items: center; gap: .6rem; margin: -.55rem 0 1.1rem; }
+.forca__barras { flex: 1; display: flex; gap: 4px; }
+.forca__barra { flex: 1; height: 3px; background: var(--linha); border-radius: 2px; transition: background var(--t-rapido); }
+.forca__txt { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza); min-width: 6.4rem; text-align: right; }
+.forca[data-nivel="1"] .forca__barra:nth-child(-n+1) { background: #d8412f; }
+.forca[data-nivel="2"] .forca__barra:nth-child(-n+2) { background: #d98b2f; }
+.forca[data-nivel="3"] .forca__barra:nth-child(-n+3) { background: #b8a52f; }
+.forca[data-nivel="4"] .forca__barra { background: #2f7a4f; }
+
+/* texto de apoio sob um campo (ex: confirmar senha) */
+.cx-dica { display: block; margin-top: .35rem; font-size: .74rem; color: var(--cinza); }
+
+/* =================================================== 2. AVISO DE DEMO
+   Fica dentro do formulario e e explicito: nao ha login real ainda.        */
+.cx-aviso {
+  display: flex; gap: .7rem; align-items: flex-start;
+  padding: .85rem 1rem;
+  border: 1px dashed var(--linha);
+  border-radius: 4px;
+  background: #fcfbfa;
+  margin-bottom: 1.5rem;
+}
+.cx-aviso svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 3px; color: var(--rosa-forte); }
+.cx-aviso p { font-size: .78rem; color: var(--cinza); line-height: 1.7; }
+.cx-aviso b { color: var(--grafite); font-weight: 500; }
+
+/* ============================================== 3. AJUSTES DE ENTRADA
+   login.html e cadastro.html usam a MESMA .entrar--pagina do conta.html,
+   para nao existir dois padroes de tela de acesso no site. O que muda e
+   que agora elas sao paginas independentes: a altura deixa de ser 100svh
+   e passa a ser governada pelo conteudo, com respiro no pe.                */
+.pagina-acesso { padding-bottom: clamp(3rem, 7vw, 6rem); }
+.pagina-acesso .entrar--pagina { margin-bottom: 0; }
+.pagina-acesso .entrar__caixa { max-width: 420px; }
+
+/* lista curta de garantias abaixo do formulario */
+.cx-selos { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--linha); }
+.cx-selos span { display: inline-flex; align-items: center; gap: .45rem; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cinza); }
+.cx-selos svg { width: 14px; height: 14px; color: var(--rosa-forte); flex: 0 0 auto; }
+
+/* marca no alto do formulario — mesma logo e mesma serif do site */
+.cx-marca { display: inline-flex; align-items: center; gap: .8rem; margin-bottom: 1.4rem; }
+.cx-marca img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+.cx-marca b { font-family: var(--serif); font-weight: 400; font-size: 1.14rem; }
+.cx-marca b i { font-style: italic; color: var(--rosa-forte); }
+
+.cx-titulo { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 4vw, 2.15rem); line-height: 1.2; margin-bottom: .5rem; }
+.cx-sub { color: var(--cinza); font-size: .88rem; line-height: 1.75; margin-bottom: 1.6rem; }
+
+/* as abas Entrar / Criar conta agora sao LINKS (navegam entre paginas).
+   Regra nova e aditiva: nao altera o .entrar__abas button que ja existia. */
+.entrar__abas a { position: relative; padding-bottom: .8rem; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--cinza); transition: color var(--t-rapido); }
+.entrar__abas a:hover { color: var(--tinta); }
+.entrar__abas a.on { color: var(--tinta); }
+.entrar__abas a::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 100%; height: 2px; background: var(--rosa-forte); transform: scaleX(0); transition: transform var(--t-medio); }
+.entrar__abas a.on::after { transform: none; }
+
+/* linha "manter conectado" + "esqueceu a senha" */
+.cx-linha-acoes { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1rem; margin: .2rem 0 1.3rem; }
+.cx-linha-acoes .lk { font-size: .8rem; }
+
+/* bloco de recuperacao de senha, revelado pelo link */
+.cx-recuperar { padding: .9rem 1.05rem; margin: -.6rem 0 1.3rem; border: 1px solid var(--linha); border-left: 3px solid var(--rosa); border-radius: 3px; background: var(--areia); }
+.cx-recuperar p { font-size: .8rem; line-height: 1.75; color: var(--grafite); }
+.cx-recuperar a { color: var(--rosa-escuro); text-decoration: underline; text-underline-offset: 3px; }
+
+/* troca entre login e cadastro */
+.cx-troca { margin-top: 1.3rem; font-size: .86rem; color: var(--cinza); text-align: center; }
+.cx-troca a { color: var(--rosa-forte); font-weight: 500; }
+
+/* voltar para a loja */
+.cx-voltar-loja { margin-top: 1.4rem; text-align: center; font-size: .8rem; }
+.cx-voltar-loja .lk-seta { color: var(--grafite); }
+.cx-voltar-loja .lk-seta:hover { color: var(--rosa-forte); }
+
+/* recado do sistema: login sem servidor. Fica visivel, nao escondido. */
+.cx-sistema { padding: .95rem 1.1rem; margin-bottom: 1.2rem; border-radius: 4px; background: var(--rosa-lavado); border: 1px solid var(--rosa-claro); }
+.cx-sistema p { font-size: .8rem; line-height: 1.7; color: var(--grafite); }
+.cx-sistema b { color: var(--tinta); font-weight: 500; }
+.cx-sistema .bt { margin-top: .8rem; }
+
+/* aceite dos termos nao marcado: a caixa fica vermelha como os campos */
+.escolha.cx-erro-aceite input { border-color: #d8412f; background: #fdf2f0; }
+.escolha.cx-erro-aceite span { color: #c0301f; }
+
+/* ============================== 11. FAIXA DO MODO DEMONSTRACAO
+   Fica no fim do arquivo de proposito: e a ultima folha carregada, entao
+   estas regras vencem o .oculto do base.css sem precisar de !important.
+   Fora do modo demo a faixa simplesmente nao existe na tela.              */
+.cx-faixa-demo { display: none; }
+body.em-demo .cx-faixa-demo {
+  display: block;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  background: var(--tinta); color: #fff;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.cx-faixa-demo__dentro {
+  display: flex; align-items: center; gap: .9rem;
+  padding-block: .7rem; flex-wrap: wrap;
+}
+.cx-faixa-demo__dentro > span { color: var(--rosa); flex: 0 0 auto; display: inline-flex; }
+.cx-faixa-demo__dentro > span svg { width: 16px; height: 16px; }
+.cx-faixa-demo p { flex: 1 1 16rem; font-size: .78rem; line-height: 1.6; color: rgba(255, 255, 255, .8); }
+.cx-faixa-demo b { color: #fff; font-weight: 500; }
+.cx-faixa-demo .cx-bt-mini {
+  background: transparent; border-color: rgba(255, 255, 255, .4); color: #fff;
+  white-space: nowrap;
+}
+.cx-faixa-demo .cx-bt-mini:hover { border-color: var(--rosa); color: var(--rosa); }
+
+/* a faixa nao pode cobrir o fim do conteudo */
+body.em-demo main { padding-bottom: 5.5rem; }
+
+
+/* ================================================ 4. CABECA DO PAINEL */
+.cx-cabeca { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: clamp(1.4rem, 3vw, 2.2rem); }
+.cx-cabeca h1 { font-size: clamp(1.65rem, 3.6vw, 2.5rem); }
+.cx-cabeca p { color: var(--cinza); font-size: .88rem; margin-top: .3rem; }
+
+/* ============================================ 5. CARTOES DE METRICA */
+.cx-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
+.cx-cartao { padding: 1.15rem 1.25rem; border: 1px solid var(--linha); border-radius: 4px; background: #fff; }
+.cx-cartao > span { display: block; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--cinza); margin-bottom: .35rem; }
+.cx-cartao > b { display: block; font-family: var(--serif); font-weight: 400; font-size: 1.5rem; line-height: 1.25; }
+.cx-cartao > small { display: block; margin-top: .25rem; font-size: .74rem; color: var(--cinza); }
+.cx-cartao--fita { display: flex; align-items: center; gap: .9rem; }
+.cx-cartao--fita img { width: 54px; height: 68px; object-fit: cover; border-radius: 3px; flex: 0 0 auto; }
+.cx-cartao--fita b { font-size: 1.05rem; }
+
+/* atalhos da visao geral */
+.cx-atalhos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; margin-top: 1.1rem; }
+.cx-atalho {
+  display: flex; align-items: center; gap: .8rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--linha); border-radius: 4px;
+  background: #fff; text-align: left; width: 100%;
+  transition: var(--t-rapido);
+}
+.cx-atalho svg { width: 19px; height: 19px; color: var(--rosa-forte); flex: 0 0 auto; }
+.cx-atalho b { display: block; font-weight: 400; font-size: .92rem; }
+.cx-atalho small { display: block; color: var(--cinza); font-size: .74rem; }
+.cx-atalho:hover { border-color: var(--rosa); background: var(--rosa-lavado); }
+
+/* ===================================================== 6. PEDIDOS
+   Cartao de pedido: pensado primeiro para o celular (tudo empilhado e
+   largo), e so no desktop vira linha.                                       */
+.cx-pedidos { display: grid; gap: .9rem; }
+.cx-pedido { border: 1px solid var(--linha); border-radius: 4px; background: #fff; overflow: hidden; }
+.cx-pedido__topo {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem;
+  padding: .95rem 1.15rem;
+  background: var(--areia);
+  border-bottom: 1px solid var(--linha);
+}
+.cx-pedido__num { font-family: var(--serif); font-size: 1.02rem; }
+.cx-pedido__data { font-size: .76rem; color: var(--cinza); }
+.cx-pedido__topo .cx-selo { margin-left: auto; }
+
+.cx-pedido__corpo { display: flex; gap: 1rem; align-items: center; padding: 1.05rem 1.15rem; }
+.cx-pedido__fotos { display: flex; gap: .4rem; flex: 0 0 auto; }
+.cx-pedido__fotos img { width: 54px; height: 68px; object-fit: cover; border-radius: 3px; border: 1px solid var(--linha); }
+.cx-pedido__fotos .cx-mais {
+  width: 54px; height: 68px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--areia); border: 1px solid var(--linha);
+  font-size: .78rem; color: var(--grafite);
+}
+.cx-pedido__info { flex: 1 1 auto; min-width: 0; }
+.cx-pedido__info b { display: block; font-weight: 400; font-size: .92rem; }
+.cx-pedido__info span { display: block; font-size: .78rem; color: var(--cinza); margin-top: .2rem; }
+.cx-pedido__pe { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; padding: 0 1.15rem 1.15rem; }
+
+/* selo de status — todos os seis estados tem aparencia propria */
+.cx-selo {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+  background: var(--areia-2); color: var(--grafite);
+  white-space: nowrap;
+}
+.cx-selo::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: 0 0 auto; }
+.cx-selo--andamento { background: var(--rosa-lavado); color: var(--rosa-escuro); }
+.cx-selo--ok { background: #eaf6ee; color: #2f7a4f; }
+.cx-selo--cancelado { background: #f4f4f5; color: var(--cinza); }
+
+/* ============================================ 7. DETALHE DO PEDIDO */
+.cx-voltar { display: inline-flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--cinza); margin-bottom: 1.2rem; }
+.cx-voltar svg { width: 15px; height: 15px; }
+.cx-voltar:hover { color: var(--rosa-forte); }
+
+.cx-detalhe__topo { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; margin-bottom: .4rem; }
+.cx-detalhe__topo h2 { margin-bottom: 0; }
+
+/* linha do tempo — cinco etapas, sem depender de largura fixa */
+.cx-linha { margin: 1.6rem 0 1.8rem; }
+.cx-linha__trilho { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
+.cx-linha__etapa { text-align: center; }
+.cx-linha__marca { height: 3px; background: var(--linha); border-radius: 2px; margin-bottom: .7rem; }
+.cx-linha__etapa.feita .cx-linha__marca { background: var(--rosa-forte); }
+.cx-linha__etapa.atual .cx-linha__marca { background: var(--rosa); }
+.cx-linha__pt { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--cinza-2); margin: -.55rem auto .5rem; }
+.cx-linha__etapa.feita .cx-linha__pt { background: var(--rosa-forte); }
+.cx-linha__etapa.atual .cx-linha__pt { background: var(--rosa); box-shadow: 0 0 0 5px rgba(255, 101, 195, .2); }
+.cx-linha__nome { display: block; font-size: .66rem; letter-spacing: .06em; color: var(--cinza-2); line-height: 1.4; }
+.cx-linha__etapa.feita .cx-linha__nome, .cx-linha__etapa.atual .cx-linha__nome { color: var(--tinta); }
+.cx-linha__etapa.atual .cx-linha__nome { font-weight: 500; }
+
+/* pedido cancelado nao tem linha do tempo: tem aviso */
+.cx-cancelado {
+  display: flex; gap: .7rem; align-items: flex-start;
+  padding: .9rem 1.05rem; margin: 1.4rem 0 1.6rem;
+  border: 1px solid var(--linha); border-radius: 4px; background: var(--areia);
+}
+.cx-cancelado svg { width: 17px; height: 17px; color: var(--cinza); flex: 0 0 auto; margin-top: 2px; }
+.cx-cancelado p { font-size: .82rem; color: var(--grafite); line-height: 1.7; }
+
+/* itens */
+.cx-itens { border: 1px solid var(--linha); border-radius: 4px; overflow: hidden; }
+.cx-item { display: flex; gap: 1rem; align-items: center; padding: 1rem 1.15rem; }
+.cx-item + .cx-item { border-top: 1px solid var(--linha); }
+.cx-item img { width: 66px; height: 84px; object-fit: cover; border-radius: 3px; flex: 0 0 auto; border: 1px solid var(--linha); }
+.cx-item__txt { flex: 1 1 auto; min-width: 0; }
+.cx-item__txt b { display: block; font-weight: 400; font-size: .94rem; }
+.cx-item__txt span { display: block; font-size: .78rem; color: var(--cinza); margin-top: .25rem; }
+.cx-item__preco { text-align: right; flex: 0 0 auto; }
+.cx-item__preco .consulta { font-size: .74rem; }
+
+/* resumo de valores */
+.cx-resumo { margin-top: 1.1rem; border: 1px solid var(--linha); border-radius: 4px; padding: 1.15rem 1.25rem; }
+.cx-resumo dl { display: grid; gap: .55rem; }
+.cx-resumo dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.cx-resumo dt { font-size: .8rem; color: var(--cinza); }
+.cx-resumo dd { font-size: .86rem; }
+.cx-resumo .cx-total { margin-top: .6rem; padding-top: .8rem; border-top: 1px solid var(--linha); }
+.cx-resumo .cx-total dt { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--grafite); }
+.cx-resumo .cx-total dd { font-family: var(--serif); font-size: 1.15rem; }
+
+/* blocos de entrega e pagamento */
+.cx-blocos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; margin-top: 1.1rem; }
+.cx-bloco { border: 1px solid var(--linha); border-radius: 4px; padding: 1.15rem 1.25rem; }
+.cx-bloco h3 { font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--cinza); margin-bottom: .7rem; }
+.cx-bloco p { font-size: .86rem; line-height: 1.75; color: var(--grafite); }
+.cx-bloco b { color: var(--tinta); font-weight: 400; }
+.cx-rastreio { margin-top: .7rem; padding: .55rem .7rem; background: var(--areia); border-radius: 3px; font-size: .8rem; letter-spacing: .06em; }
+
+/* ==================================================== 8. ENDERECOS */
+.cx-enderecos { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 1rem; }
+.cx-endereco { border: 1px solid var(--linha); border-radius: 4px; padding: 1.15rem 1.25rem; display: flex; flex-direction: column; gap: .6rem; }
+.cx-endereco--principal { border-color: var(--rosa); box-shadow: 0 0 0 1px var(--rosa) inset; }
+.cx-endereco__topo { display: flex; align-items: center; gap: .6rem; }
+.cx-endereco__topo b { font-family: var(--serif); font-weight: 400; font-size: 1rem; }
+.cx-tag { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; background: var(--rosa-forte); color: #fff; padding: .18rem .5rem; border-radius: 999px; }
+.cx-endereco p { font-size: .82rem; line-height: 1.7; color: var(--grafite); }
+.cx-endereco__acoes { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: .8rem; border-top: 1px solid var(--linha); }
+.cx-endereco--novo { border-style: dashed; align-items: center; justify-content: center; text-align: center; min-height: 190px; color: var(--cinza); transition: var(--t-rapido); }
+.cx-endereco--novo svg { width: 22px; height: 22px; margin-bottom: .5rem; color: var(--rosa-forte); }
+.cx-endereco--novo:hover { border-color: var(--rosa); background: var(--rosa-lavado); color: var(--grafite); }
+
+/* botoes pequenos de acao dentro de cartao */
+.cx-bt-mini {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .5rem .85rem;
+  border: 1px solid var(--linha); border-radius: 999px;
+  font-size: .7rem; letter-spacing: .06em; color: var(--grafite);
+  background: #fff; transition: var(--t-rapido);
+}
+.cx-bt-mini svg { width: 13px; height: 13px; }
+.cx-bt-mini:hover { border-color: var(--rosa); color: var(--rosa-escuro); }
+.cx-bt-mini--perigo:hover { border-color: #d8412f; color: #c0301f; }
+
+/* ================================================= 9. FORMULARIOS */
+.cx-form { max-width: 560px; }
+.cx-form__grade { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.cx-form__acoes { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.3rem; }
+.cx-secao + .cx-secao { margin-top: clamp(2.2rem, 5vw, 3.4rem); padding-top: clamp(1.8rem, 4vw, 2.6rem); border-top: 1px solid var(--linha); }
+.cx-secao h2 { font-size: clamp(1.3rem, 2.6vw, 1.75rem); margin-bottom: .4rem; }
+.cx-secao > p { color: var(--cinza); font-size: .86rem; margin-bottom: 1.6rem; }
+
+/* ==================================================== 10. MOBILE
+   Nenhum ponto do painel pode gerar rolagem horizontal. Por isso, em
+   telas estreitas: contadores de coluna viram 1, a linha do tempo vira
+   lista vertical e os botoes ficam confortaveis para o dedo.              */
+@media (max-width: 700px) {
+  .cx-form__grade { grid-template-columns: 1fr; }
+  .cx-pedido__corpo { flex-wrap: wrap; }
+  .cx-pedido__pe .bt { width: 100%; justify-content: center; }
+
+  /* linha do tempo em coluna: ler de cima para baixo e mais claro */
+  .cx-linha__trilho { grid-template-columns: 1fr; gap: 0; }
+  .cx-linha__etapa { display: grid; grid-template-columns: 22px 1fr; gap: .1rem .7rem; text-align: left; padding-bottom: 1.1rem; position: relative; }
+  .cx-linha__etapa:last-child { padding-bottom: 0; }
+  .cx-linha__marca { display: none; }
+  .cx-linha__pt { grid-row: 1 / span 2; margin: .3rem 0 0; width: 11px; height: 11px; }
+  .cx-linha__etapa:not(:last-child)::after {
+    content: ""; position: absolute; left: 5px; top: 1.5rem; bottom: 0;
+    width: 1px; background: var(--linha);
+  }
+  .cx-linha__etapa.feita:not(:last-child)::after { background: var(--rosa-claro); }
+  .cx-linha__nome { grid-column: 2; }
+
+  .cx-resumo { padding: 1rem; }
+  .cx-item { padding: .9rem 1rem; }
+  .cx-item img { width: 58px; height: 74px; }
+}
+
+@media (max-width: 520px) {
+  .cx-cabeca { flex-direction: column; align-items: flex-start; }
+  .cx-cartao--fita img { width: 46px; height: 58px; }
+  .cx-pedido__topo .cx-selo { margin-left: 0; }
+  .cx-pedido__fotos img, .cx-pedido__fotos .cx-mais { width: 46px; height: 58px; }
+  .cx-item { gap: .8rem; }
+  .cx-item__preco { text-align: left; width: 100%; }
+  .cx-selos { gap: .5rem 1rem; }
+}

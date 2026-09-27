@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entrar — La Belle Modas</title>
+<meta name="description" content="Entre na sua conta La Belle Modas para acompanhar seus pedidos e suas informações.">
+<meta name="theme-color" content="#0f1116">
+<link rel="icon" href="assets/img/logo/labelle-avatar-sm.webp">
+<link rel="apple-touch-icon" href="assets/img/logo/labelle-avatar.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/paginas.css">
+<link rel="stylesheet" href="assets/css/conta.css">
+</head>
+<body>
+
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div data-shell-topo></div>
+
+<main id="conteudo">
+  <div class="envelope">
+    <nav class="migalha" aria-label="Você está em">
+      <a href="index.html">Início</a> <span aria-hidden="true">/</span> <span aria-current="page">Entrar</span>
+    </nav>
+
+    <div class="entrar entrar--pagina pagina-acesso">
+      <figure class="entrar__foto">
+        <img src="assets/img/hero/hero-b.webp" alt="Modelo vestindo uma peça da La Belle Modas" width="1200" height="1500">
+        <figcaption>
+          <b>Bem-vinda à La Belle</b>
+          <p>Acompanhe seus pedidos, guarde seus endereços e fale direto com a loja.</p>
+        </figcaption>
+      </figure>
+
+      <div class="entrar__lado">
+        <div class="entrar__caixa">
+
+          <div class="cx-marca">
+            <img src="assets/img/logo/labelle-avatar.webp" alt="" width="46" height="46">
+            <b>La <i>Belle</i></b>
+          </div>
+
+          <div class="entrar__abas">
+            <a class="on" href="login.html" aria-current="page">Entrar</a>
+            <a href="cadastro.html">Criar conta</a>
+          </div>
+
+          <h1 class="cx-titulo">Bem-vinda de volta</h1>
+          <p class="cx-sub">Entre na sua conta para acompanhar seus pedidos e suas informações.</p>
+
+          <div class="cx-aviso">
+            <span data-ico="info" aria-hidden="true"></span>
+            <p><b>Demonstração visual.</b> Esta é a tela de acesso da cliente. O projeto ainda não tem
+            servidor de login, então nenhuma senha é enviada, guardada ou conferida aqui.</p>
+          </div>
+
+          <form id="formLogin" novalidate>
+            <label class="campo">
+              <span class="rotulo">E-mail</span>
+              <input class="entrada" type="email" name="email" autocomplete="email"
+                     placeholder="voce@email.com" required>
+            </label>
+
+            <label class="campo">
+              <span class="rotulo">Senha</span>
+              <input class="entrada" type="password" name="senha" autocomplete="current-password"
+                     placeholder="••••••••" required>
+            </label>
+
+            <div class="cx-linha-acoes">
+              <label class="escolha"><input type="checkbox" name="manter"><span>Manter conectado</span></label>
+              <button class="lk" type="button" id="btEsqueci" aria-expanded="false" aria-controls="recuperar">Esqueceu sua senha?</button>
+            </div>
+
+            <div class="cx-recuperar oculto" id="recuperar">
+              <p>A redefinição de senha por e-mail chega junto com a área do cliente.
+              Por enquanto, fale com a loja pelo WhatsApp informando o e-mail da sua conta
+              e a La Belle libera um novo acesso para você.</p>
+            </div>
+
+            <button class="bt bt--rosa bt--largo" type="submit">Entrar</button>
+          </form>
+
+          <div class="cx-sistema oculto" id="sistema" role="status"></div>
+
+          <p class="cx-troca">Ainda não tem uma conta? <a href="cadastro.html">Criar conta</a></p>
+
+          <div class="cx-selos">
+            <span><span data-ico="caminhao" aria-hidden="true"></span> Enviamos para todo o Brasil</span>
+            <span><span data-ico="troca" aria-hidden="true"></span> 7 dias para troca on-line</span>
+            <span><span data-ico="zap" aria-hidden="true"></span> Atendimento pelo WhatsApp</span>
+          </div>
+
+          <p class="cx-voltar-loja"><a class="lk-seta" href="index.html">Voltar para a loja</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div data-shell-pe></div>
+
+<script src="assets/js/dados.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/conta-ui.js"></script>
+<script src="assets/js/conta-mock.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  LB.iniciar({ pagina: "login" });
+  CONTA_UI.pintarIcones();
+  CONTA_UI.prepararSenhas();
+
+  var form = document.querySelector("#formLogin");
+  var botao = form.querySelector('button[type="submit"]');
+  var email = form.querySelector("[name=email]");
+  var senha = form.querySelector("[name=senha]");
+  var sistema = document.querySelector("#sistema");
+  var recuperar = document.querySelector("#recuperar");
+
+  /* limpa o erro do campo assim que a pessoa comeca a corrigir */
+  [email, senha].forEach(function (c) {
+    c.addEventListener("input", function () { CONTA_UI.limparErro(c); });
+  });
+
+  document.querySelector("#btEsqueci").addEventListener("click", function () {
+    var aberto = !recuperar.classList.contains("oculto");
+    recuperar.classList.toggle("oculto", aberto);
+    this.setAttribute("aria-expanded", aberto ? "false" : "true");
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    CONTA_UI.limparTudo(form);
+    sistema.classList.add("oculto");
+
+    var vEmail = email.value.trim();
+    var vSenha = senha.value;
+
+    if (!vEmail) { CONTA_UI.marcarErro(email, "Digite o seu e-mail."); }
+    else if (!CONTA_UI.ehEmail(vEmail)) { CONTA_UI.marcarErro(email, "Confira o seu e-mail, por favor."); }
+
+    if (!vSenha) { CONTA_UI.marcarErro(senha, "Digite a sua senha."); }
+    else if (vSenha.length < 6) { CONTA_UI.marcarErro(senha, "A senha tem pelo menos 6 caracteres."); }
+
+    if (CONTA_UI.focarPrimeiroErro(form)) return;
+
+    /* Nao existe autenticacao real nesta fase. Em vez de fingir um login,
+       a tela diz a verdade e oferece o caminho que a loja ja usa hoje. */
+    botao.disabled = true;
+    CONTA_MOCK.API.entrar(vEmail, vSenha)["catch"](function () {
+      sistema.innerHTML =
+        '<p><b>Ainda não foi possível entrar.</b> Este projeto está na fase de apresentação e ' +
+        'não tem servidor de login. A sua senha não foi enviada nem guardada em nenhum lugar.</p>' +
+        '<a class="bt bt--rosa bt--pequeno" href="' + LB.LOJA.whatsapp + '" target="_blank" rel="noopener">' +
+        'Falar com a loja no WhatsApp</a>';
+      sistema.classList.remove("oculto");
+      botao.disabled = false;
+      sistema.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  });
+})();
+</script>
+</body>
+</html>
